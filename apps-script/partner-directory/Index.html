@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base target="_blank">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       NARN — "The Relay" component theme (final, merged system)
+       Shared drop-in styles for every NARN mini-app embed.
+       Selectors listed in the brand contract are never renamed —
+       new mini-apps may ADD classes but must reuse this exact set.
+       ============================================================ */
+
+    :root {
+      /* ---- brand palette ---- */
+      --primary: #1F3D2E;         /* deep forest ink — headings, dark UI, masthead */
+      --primary-rgb: 31, 61, 46;
+      --primaryDark: #12231A;     /* near-black forest — pressed states, id/count stamps */
+      --primaryDark-rgb: 18, 35, 26;
+      --accent: #C63F17;          /* flare-orange — primary CTA, urgent badge, focus ring */
+      --accent-rgb: 198, 63, 23;
+      --accent-pressed: #8A2C10;  /* struck-shadow shade under the primary button */
+      --accentAlt: #C98A1D;       /* marigold gold — needed/in-progress signal, funding bars */
+      --accentAlt-rgb: 201, 138, 29;
+      --background: #F5EEDF;      /* warm parchment page ground */
+      --surface: #FFFCF5;         /* warm ivory card/panel stock */
+      --ink: #211C15;             /* true warm near-black — reading text, deliberately NOT green */
+      --inkMuted: #5B5445;        /* warm taupe — meta, captions, fine print */
+      --line: #D9C9A0;            /* warm khaki border — reads like cut cardstock, not a UI grey */
+
+      /* ---- structural tokens ---- */
+      --shadow: 0 20px 40px -18px rgba(18, 35, 26, .42), 0 2px 8px rgba(18, 35, 26, .08);
+      --shadow-hover: 0 26px 48px -18px rgba(18, 35, 26, .5), 0 3px 10px rgba(18, 35, 26, .1);
+      --radius: 10px;      /* cards, panels, filter bar, state blocks */
+      --radius-sm: 6px;    /* buttons, inputs, badges, chips, id tags — sharper, "tag" scale */
+    }
+
+    * { box-sizing: border-box; }
+
+    img { max-width: 100%; }
+
+    ::selection { background: var(--accentAlt); color: var(--primaryDark); }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      position: relative;
+      color: var(--ink);
+      background-color: var(--background);
+      background-image: radial-gradient(rgba(33, 28, 21, .045) 1px, transparent 1.5px);
+      background-size: 16px 16px;
+      font-family: 'IBM Plex Sans', 'Segoe UI', Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Masthead stripe — the one graphic device every embedded NARN page shares,
+       so a dozen separate Google Sites mini-apps still read as one product. */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--accent), var(--accentAlt));
+      z-index: 1000;
+    }
+
+    .shell { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: 34px 0 52px; }
+
+    .intro {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 24px;
+      padding-bottom: 18px;
+      border-bottom: 2px dashed var(--line);
+    }
+
+    h1 {
+      position: relative;
+      margin: 0 0 8px;
+      padding-left: 20px;
+      color: var(--primary);
+      font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+      font-weight: 800;
+      font-size: clamp(1.9rem, 4.2vw, 2.9rem);
+      line-height: 1.06;
+      letter-spacing: -0.01em;
+      text-wrap: balance;
+    }
+    h1::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 0.12em; bottom: 0.12em;
+      width: 6px;
+      border-radius: 2px;
+      background: var(--accent);
+    }
+
+    .intro p { margin: 0; max-width: 700px; color: var(--inkMuted); font-size: 1.02rem; }
+
+    .count {
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+      background: var(--primaryDark);
+      color: #fff;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-weight: 600;
+      font-size: .82rem;
+      letter-spacing: .02em;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* ---------- Filters ---------- */
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      padding: 16px;
+      margin-bottom: 26px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    label {
+      display: grid;
+      gap: 5px;
+      font-family: 'IBM Plex Sans', Arial, sans-serif;
+      font-size: .74rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    input, select {
+      width: 100%;
+      min-height: 43px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 9px 11px;
+      color: var(--ink);
+      background: var(--surface);
+      font: inherit;
+    }
+    input::placeholder { color: var(--inkMuted); opacity: .8; }
+    input:focus-visible, select:focus-visible {
+      outline: 3px solid rgba(var(--accent-rgb), .35);
+      outline-offset: 2px;
+      border-color: var(--accent);
+    }
+    a:focus-visible, button:focus-visible, .tab:focus-visible {
+      outline: 3px solid rgba(var(--accent-rgb), .35);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 930px) {
+      .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 620px) {
+      .intro { align-items: flex-start; flex-direction: column; }
+      .filters { grid-template-columns: 1fr; }
+    }
+
+    /* ---------- Card grid ---------- */
+
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+
+    @media (max-width: 930px) {
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 620px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+
+    .photo-wrap { position: relative; aspect-ratio: 4 / 3; background: var(--line); overflow: hidden; }
+    .photo { width: 100%; height: 100%; display: block; object-fit: cover; }
+    .photo-fallback {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+      color: var(--primary);
+      font-size: 3.4rem;
+      background: linear-gradient(160deg, var(--line), var(--background));
+    }
+
+    /* Clipped "luggage tag" corner — the identity's signature shape, tying every
+       status badge back to the relay/manifest metaphor instead of a generic pill. */
+    .badge {
+      position: absolute;
+      top: 12px; left: 12px;
+      padding: 6px 12px 6px 10px;
+      background: var(--primaryDark);
+      color: #fff;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-weight: 600;
+      font-size: .72rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      border-radius: 3px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .25);
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    }
+    .badge.urgent { background: var(--accent); }
+    .badge.needed { background: var(--accentAlt); color: var(--primaryDark); }
+
+    .body { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+
+    .title-row { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+
+    h2 {
+      margin: 0;
+      color: var(--primary);
+      font-family: 'Fraunces', Georgia, serif;
+      font-weight: 700;
+      font-size: 1.42rem;
+      line-height: 1.15;
+    }
+
+    .id {
+      white-space: nowrap;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-size: .72rem;
+      font-weight: 500;
+      color: var(--inkMuted);
+      background: var(--background);
+      border: 1px solid var(--line);
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    .meta { margin: 7px 0 12px; color: var(--inkMuted); font-size: .93rem; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .chip {
+      border-radius: var(--radius-sm);
+      padding: 4px 10px;
+      background: rgba(var(--primary-rgb), .08);
+      border: 1px solid rgba(var(--primary-rgb), .18);
+      color: var(--primary);
+      font-size: .76rem;
+      font-weight: 700;
+      letter-spacing: .01em;
+    }
+
+    .description {
+      display: -webkit-box;
+      overflow: hidden;
+      min-height: 4.5em;
+      margin: 0 0 12px;
+      color: var(--ink);
+      font-size: .95rem;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+
+    .compatibility { margin: 0 0 13px; font-size: .82rem; color: var(--inkMuted); }
+
+    .verified {
+      margin: 0 0 14px;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-size: .72rem;
+      letter-spacing: .02em;
+      color: var(--inkMuted);
+    }
+
+    /* Dashed "tear line" above actions — you tear the stub and go. */
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 2px dashed var(--line);
+    }
+
+    .button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 42px;
+      border-radius: var(--radius-sm);
+      padding: 9px 16px;
+      border: 2px solid transparent;
+      text-decoration: none;
+      font-family: 'IBM Plex Sans', Arial, sans-serif;
+      font-weight: 700;
+      font-size: .94rem;
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease, transform .12s ease, box-shadow .12s ease;
+    }
+
+    /* Primary reads like a stamped, pressable badge rather than a soft app glow. */
+    .button.primary {
+      color: #fff;
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 3px 0 var(--accent-pressed);
+    }
+    .button.primary:hover { transform: translateY(-1px); box-shadow: 0 4px 0 var(--accent-pressed); }
+    .button.primary:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--accent-pressed); }
+
+    .button.secondary { color: var(--primary); background: var(--surface); border-color: var(--primary); }
+    .button.secondary:hover { background: rgba(var(--primary-rgb), .06); }
+    .button.secondary:active { transform: translateY(1px); }
+
+    .state {
+      grid-column: 1 / -1;
+      padding: 40px 20px;
+      text-align: center;
+      background: var(--surface);
+      border: 2px dashed var(--line);
+      border-radius: var(--radius);
+    }
+    .state strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--primary);
+      font-family: 'Fraunces', Georgia, serif;
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+    .state span { color: var(--inkMuted); }
+    .state.error { border-style: solid; border-color: rgba(var(--accent-rgb), .4); }
+    .state.error strong { color: var(--accent-pressed); }
+
+    /* ============================================================
+       Additions for the partner directory
+       ============================================================ */
+
+    /* This app's cards carry no photo, so the status badge sits in a static
+       row at the top of the card body instead of pinned over a photo-wrap. */
+    .card-top { display: flex; margin-bottom: 12px; }
+    .card-top .badge { position: static; box-shadow: none; }
+
+    /* Closed / Needs Confirmation — a muted, non-urgent "not right now" tone,
+       distinct from the flare-orange .urgent used for time-sensitive asks. */
+    .badge.closed { background: var(--inkMuted); color: #fff; }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="intro" aria-labelledby="directory-title">
+      <div>
+        <h1 id="directory-title">Shelter &amp; rescue partner directory</h1>
+        <p>Browse vetted partner organizations by service area, species, and current intake capacity. Confirm details with the partner directly before making a referral or transport plan.</p>
+      </div>
+      <div id="count" class="count" aria-live="polite">Loading…</div>
+    </section>
+
+    <section class="filters" aria-label="Filter partner organizations">
+      <label>State or service area
+        <select id="area"><option value="">All areas</option></select>
+      </label>
+      <label>Animal types
+        <select id="animalType"><option value="">All animal types</option></select>
+      </label>
+      <label>Capacity status
+        <select id="status"><option value="">All statuses</option></select>
+      </label>
+    </section>
+
+    <section id="directory" class="grid" aria-live="polite" aria-busy="true">
+      <div class="state"><strong>Loading partner directory…</strong></div>
+    </section>
+  </main>
+
+  <script>
+    'use strict';
+    let partners = [];
+    const directory = document.getElementById('directory');
+    const count = document.getElementById('count');
+    const controls = ['area', 'animalType', 'status'].map(id => document.getElementById(id));
+
+    controls.forEach(control => control.addEventListener('input', render));
+
+    google.script.run
+      .withSuccessHandler(data => {
+        partners = Array.isArray(data.partners) ? data.partners : [];
+        populateFilter('area', unique(partners.map(partner => partner.area)));
+        populateFilter('animalType', unique(partners.flatMap(partner => partner.animalTypes)));
+        populateFilter('status', unique(partners.map(partner => partner.status)));
+        directory.setAttribute('aria-busy', 'false');
+        render();
+      })
+      .withFailureHandler(error => {
+        directory.setAttribute('aria-busy', 'false');
+        directory.replaceChildren(message('The partner directory could not be loaded.', error && error.message, true));
+        count.textContent = 'Unavailable';
+      })
+      .getPartnerDirectoryData();
+
+    function render() {
+      const selected = {
+        area: document.getElementById('area').value,
+        animalType: document.getElementById('animalType').value,
+        status: document.getElementById('status').value
+      };
+      const filtered = partners.filter(partner => {
+        return (!selected.area || partner.area === selected.area) &&
+          (!selected.animalType || partner.animalTypes.includes(selected.animalType)) &&
+          (!selected.status || partner.status === selected.status);
+      });
+
+      count.textContent = filtered.length + (filtered.length === 1 ? ' partner' : ' partners');
+      directory.replaceChildren();
+      if (!filtered.length) {
+        directory.appendChild(message('No partners match these filters.', 'Try clearing one or more filters.'));
+        return;
+      }
+      filtered.forEach(partner => directory.appendChild(card(partner)));
+    }
+
+    function card(partner) {
+      const article = element('article', 'card');
+      const body = element('div', 'body');
+
+      const top = element('div', 'card-top');
+      top.appendChild(statusBadge(partner.status));
+      body.appendChild(top);
+
+      const titleRow = element('div', 'title-row');
+      titleRow.appendChild(element('h2', '', partner.name));
+      titleRow.appendChild(element('span', 'id', partner.id));
+      body.appendChild(titleRow);
+
+      body.appendChild(element('p', 'meta', partner.area));
+
+      const chips = element('div', 'chips');
+      partner.animalTypes.forEach(type => chips.appendChild(element('span', 'chip', type)));
+      if (chips.childNodes.length) body.appendChild(chips);
+
+      body.appendChild(element('p', 'compatibility',
+        'Constraints: ' + (partner.constraints || 'None listed') +
+        ' · Transport support: ' + partner.transportSupport));
+
+      if (partner.lastVerified) body.appendChild(element('p', 'verified', 'Last verified: ' + partner.lastVerified));
+
+      const actions = element('div', 'actions');
+      if (isHttps(partner.contactUrl)) {
+        actions.appendChild(link('Contact this partner', partner.contactUrl, 'primary'));
+      } else {
+        actions.appendChild(element('span', 'verified', 'No public contact link on file'));
+      }
+      body.appendChild(actions);
+
+      article.appendChild(body);
+      return article;
+    }
+
+    function statusBadge(status) {
+      return element('span', 'badge' + statusBadgeModifier(status), status);
+    }
+
+    function statusBadgeModifier(status) {
+      if (status === 'Limited' || status === 'Waitlist') return ' needed';
+      if (status === 'Closed' || status === 'Needs Confirmation') return ' closed';
+      return '';
+    }
+
+    function populateFilter(id, values) {
+      const select = document.getElementById(id);
+      values.forEach(value => {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option);
+      });
+    }
+
+    function unique(values) {
+      return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b));
+    }
+
+    function element(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined) node.textContent = text;
+      return node;
+    }
+
+    function link(text, url, kind) {
+      const anchor = element('a', 'button ' + kind, text);
+      anchor.href = url;
+      anchor.rel = 'noopener noreferrer';
+      return anchor;
+    }
+
+    function isHttps(url) {
+      return typeof url === 'string' && /^https:\/\//i.test(url);
+    }
+
+    function message(title, detail, isError) {
+      const box = element('div', 'state' + (isError ? ' error' : ''));
+      box.appendChild(element('strong', '', title));
+      if (detail) box.appendChild(element('span', '', detail));
+      return box;
+    }
+  </script>
+</body>
+</html>

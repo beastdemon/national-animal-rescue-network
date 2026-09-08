@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base target="_blank">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       NARN — "The Relay" component theme (final, merged system)
+       Shared drop-in styles for every NARN mini-app embed.
+       Selectors listed in the brand contract are never renamed —
+       new mini-apps may ADD classes but must reuse this exact set.
+       ============================================================ */
+
+    :root {
+      /* ---- brand palette ---- */
+      --primary: #1F3D2E;         /* deep forest ink — headings, dark UI, masthead */
+      --primary-rgb: 31, 61, 46;
+      --primaryDark: #12231A;     /* near-black forest — pressed states, id/count stamps */
+      --primaryDark-rgb: 18, 35, 26;
+      --accent: #C63F17;          /* flare-orange — primary CTA, urgent badge, focus ring */
+      --accent-rgb: 198, 63, 23;
+      --accent-pressed: #8A2C10;  /* struck-shadow shade under the primary button */
+      --accentAlt: #C98A1D;       /* marigold gold — needed/in-progress signal, funding bars */
+      --accentAlt-rgb: 201, 138, 29;
+      --background: #F5EEDF;      /* warm parchment page ground */
+      --surface: #FFFCF5;         /* warm ivory card/panel stock */
+      --ink: #211C15;             /* true warm near-black — reading text, deliberately NOT green */
+      --inkMuted: #5B5445;        /* warm taupe — meta, captions, fine print */
+      --line: #D9C9A0;            /* warm khaki border — reads like cut cardstock, not a UI grey */
+
+      /* ---- structural tokens ---- */
+      --shadow: 0 20px 40px -18px rgba(18, 35, 26, .42), 0 2px 8px rgba(18, 35, 26, .08);
+      --shadow-hover: 0 26px 48px -18px rgba(18, 35, 26, .5), 0 3px 10px rgba(18, 35, 26, .1);
+      --radius: 10px;      /* cards, panels, filter bar, state blocks */
+      --radius-sm: 6px;    /* buttons, inputs, badges, chips, id tags — sharper, "tag" scale */
+    }
+
+    * { box-sizing: border-box; }
+
+    img { max-width: 100%; }
+
+    ::selection { background: var(--accentAlt); color: var(--primaryDark); }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      position: relative;
+      color: var(--ink);
+      background-color: var(--background);
+      background-image: radial-gradient(rgba(33, 28, 21, .045) 1px, transparent 1.5px);
+      background-size: 16px 16px;
+      font-family: 'IBM Plex Sans', 'Segoe UI', Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Masthead stripe — the one graphic device every embedded NARN page shares,
+       so a dozen separate Google Sites mini-apps still read as one product. */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--accent), var(--accentAlt));
+      z-index: 1000;
+    }
+
+    .shell { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: 34px 0 52px; }
+
+    .intro {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 24px;
+      padding-bottom: 18px;
+      border-bottom: 2px dashed var(--line);
+    }
+
+    h1 {
+      position: relative;
+      margin: 0 0 8px;
+      padding-left: 20px;
+      color: var(--primary);
+      font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+      font-weight: 800;
+      font-size: clamp(1.9rem, 4.2vw, 2.9rem);
+      line-height: 1.06;
+      letter-spacing: -0.01em;
+      text-wrap: balance;
+    }
+    h1::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 0.12em; bottom: 0.12em;
+      width: 6px;
+      border-radius: 2px;
+      background: var(--accent);
+    }
+
+    .intro p { margin: 0; max-width: 700px; color: var(--inkMuted); font-size: 1.02rem; }
+
+    .count {
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+      background: var(--primaryDark);
+      color: #fff;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-weight: 600;
+      font-size: .82rem;
+      letter-spacing: .02em;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* ---------- Filters ---------- */
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      padding: 16px;
+      margin-bottom: 26px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    label {
+      display: grid;
+      gap: 5px;
+      font-family: 'IBM Plex Sans', Arial, sans-serif;
+      font-size: .74rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    input, select {
+      width: 100%;
+      min-height: 43px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 9px 11px;
+      color: var(--ink);
+      background: var(--surface);
+      font: inherit;
+    }
+    input::placeholder { color: var(--inkMuted); opacity: .8; }
+    input:focus-visible, select:focus-visible {
+      outline: 3px solid rgba(var(--accent-rgb), .35);
+      outline-offset: 2px;
+      border-color: var(--accent);
+    }
+    a:focus-visible, button:focus-visible, .tab:focus-visible {
+      outline: 3px solid rgba(var(--accent-rgb), .35);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 930px) {
+      .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 620px) {
+      .intro { align-items: flex-start; flex-direction: column; }
+      .filters { grid-template-columns: 1fr; }
+    }
+
+    /* ---------- Card grid ---------- */
+
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+
+    @media (max-width: 930px) {
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 620px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+
+    .badge {
+      position: absolute;
+      top: 12px; left: 12px;
+      padding: 6px 12px 6px 10px;
+      background: var(--primaryDark);
+      color: #fff;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-weight: 600;
+      font-size: .72rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      border-radius: 3px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .25);
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    }
+    .badge.urgent { background: var(--accent); }
+    .badge.needed { background: var(--accentAlt); color: var(--primaryDark); }
+
+    .body { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+
+    .title-row { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+
+    h2 {
+      margin: 0;
+      color: var(--primary);
+      font-family: 'Fraunces', Georgia, serif;
+      font-weight: 700;
+      font-size: 1.42rem;
+      line-height: 1.15;
+    }
+
+    .id {
+      white-space: nowrap;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-size: .72rem;
+      font-weight: 500;
+      color: var(--inkMuted);
+      background: var(--background);
+      border: 1px solid var(--line);
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    .meta { margin: 7px 0 12px; color: var(--inkMuted); font-size: .93rem; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .chip {
+      border-radius: var(--radius-sm);
+      padding: 4px 10px;
+      background: rgba(var(--primary-rgb), .08);
+      border: 1px solid rgba(var(--primary-rgb), .18);
+      color: var(--primary);
+      font-size: .76rem;
+      font-weight: 700;
+      letter-spacing: .01em;
+    }
+
+    .description {
+      display: -webkit-box;
+      overflow: hidden;
+      min-height: 4.5em;
+      margin: 0 0 12px;
+      color: var(--ink);
+      font-size: .95rem;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+
+    .compatibility { margin: 0 0 13px; font-size: .82rem; color: var(--inkMuted); }
+
+    .verified {
+      margin: 0 0 14px;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-size: .72rem;
+      letter-spacing: .02em;
+      color: var(--inkMuted);
+    }
+
+    /* Dashed "tear line" above actions — you tear the stub and go. */
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 2px dashed var(--line);
+    }
+
+    .button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 42px;
+      border-radius: var(--radius-sm);
+      padding: 9px 16px;
+      border: 2px solid transparent;
+      text-decoration: none;
+      font-family: 'IBM Plex Sans', Arial, sans-serif;
+      font-weight: 700;
+      font-size: .94rem;
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease, transform .12s ease, box-shadow .12s ease;
+    }
+
+    /* Primary reads like a stamped, pressable badge rather than a soft app glow. */
+    .button.primary {
+      color: #fff;
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 3px 0 var(--accent-pressed);
+    }
+    .button.primary:hover { transform: translateY(-1px); box-shadow: 0 4px 0 var(--accent-pressed); }
+    .button.primary:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--accent-pressed); }
+
+    .button.secondary { color: var(--primary); background: var(--surface); border-color: var(--primary); }
+    .button.secondary:hover { background: rgba(var(--primary-rgb), .06); }
+    .button.secondary:active { transform: translateY(1px); }
+
+    .state {
+      grid-column: 1 / -1;
+      padding: 40px 20px;
+      text-align: center;
+      background: var(--surface);
+      border: 2px dashed var(--line);
+      border-radius: var(--radius);
+    }
+    .state strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--primary);
+      font-family: 'Fraunces', Georgia, serif;
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+    .state span { color: var(--inkMuted); }
+    .state.error { border-style: solid; border-color: rgba(var(--accent-rgb), .4); }
+    .state.error strong { color: var(--accent-pressed); }
+
+    /* ============================================================
+       Additions for this mini-app: a roster of state cards with no
+       photo. The badge reuses the "luggage tag" clip-path but sits
+       inline in the title row instead of pinned over a photo.
+       ============================================================ */
+    .roster-card .body { padding-top: 16px; }
+    .badge.inline {
+      position: static;
+      flex: 0 0 auto;
+    }
+    .rep-name {
+      margin: 0 0 4px;
+      color: var(--ink);
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    .contact-line {
+      margin: 0 0 12px;
+      color: var(--inkMuted);
+      font-size: .93rem;
+      word-break: break-word;
+    }
+    .contact-line a { color: var(--primary); font-weight: 600; text-decoration: underline; }
+    .open-note {
+      margin: 0 0 12px;
+      color: var(--inkMuted);
+      font-size: .93rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="intro" aria-labelledby="roster-title">
+      <div>
+        <h1 id="roster-title">State representatives</h1>
+        <p>One rep per state keeps intake, transport, and local partnerships moving without a bottleneck at HQ. Find your state below — open seats list an apply link, filled ones list how to reach the rep.</p>
+      </div>
+      <div id="count" class="count" aria-live="polite">Loading…</div>
+    </section>
+
+    <section class="filters" aria-label="Find your state">
+      <label>Search
+        <input id="search" type="search" autocomplete="off" placeholder="State name">
+      </label>
+    </section>
+
+    <section id="roster" class="grid" aria-live="polite" aria-busy="true">
+      <div class="state"><strong>Loading state roster…</strong></div>
+    </section>
+  </main>
+
+  <script>
+    'use strict';
+    let states = [];
+    const roster = document.getElementById('roster');
+    const count = document.getElementById('count');
+    const search = document.getElementById('search');
+
+    search.addEventListener('input', render);
+
+    google.script.run
+      .withSuccessHandler(data => {
+        states = Array.isArray(data.states) ? data.states : [];
+        roster.setAttribute('aria-busy', 'false');
+        render();
+      })
+      .withFailureHandler(error => {
+        roster.setAttribute('aria-busy', 'false');
+        roster.replaceChildren(message('The roster could not be loaded.', error && error.message, true));
+        count.textContent = 'Unavailable';
+      })
+      .getStateRepData();
+
+    function render() {
+      const query = search.value.trim().toLowerCase();
+      const filtered = states.filter(row => !query || row.state.toLowerCase().includes(query));
+
+      count.textContent = filtered.length + (filtered.length === 1 ? ' state listed' : ' states listed');
+      roster.replaceChildren();
+      if (!states.length) {
+        roster.appendChild(message('No states are listed yet.', 'Check back soon, or contact headquarters.'));
+        return;
+      }
+      if (!filtered.length) {
+        roster.appendChild(message('No states match that search.', 'Try a different state name.'));
+        return;
+      }
+      filtered.forEach(row => roster.appendChild(card(row)));
+    }
+
+    function card(row) {
+      const needed = row.status !== 'Filled';
+      const article = element('article', 'card roster-card');
+      const body = element('div', 'body');
+
+      const titleRow = element('div', 'title-row');
+      titleRow.appendChild(element('h2', '', row.state));
+      titleRow.appendChild(element('span', 'badge inline' + (needed ? ' needed' : ''), needed ? 'Representative needed' : 'Filled'));
+      body.appendChild(titleRow);
+
+      if (needed) {
+        body.appendChild(element('p', 'open-note', 'This state doesn’t have a representative yet. Apply to run intake, fosters, and local partnerships here.'));
+        const actions = element('div', 'actions');
+        if (isHttps(row.applyUrl)) {
+          actions.appendChild(link('Apply to represent your state', row.applyUrl, 'primary'));
+        } else {
+          body.appendChild(element('p', 'contact-line', 'Apply link coming soon.'));
+        }
+        if (actions.childNodes.length) body.appendChild(actions);
+      } else {
+        if (row.repName) body.appendChild(element('p', 'rep-name', row.repName));
+        body.appendChild(contactLine(row.contact));
+      }
+
+      article.appendChild(body);
+      return article;
+    }
+
+    function contactLine(contact) {
+      const p = element('p', 'contact-line');
+      if (!contact) {
+        p.textContent = 'Contact headquarters to reach this state’s rep.';
+        return p;
+      }
+      if (isEmail(contact)) {
+        const anchor = element('a', '', contact);
+        anchor.href = 'mailto:' + contact;
+        anchor.rel = 'noopener noreferrer';
+        p.appendChild(anchor);
+        return p;
+      }
+      if (isHttps(contact)) {
+        p.appendChild(link(contact, contact, ''));
+        return p;
+      }
+      p.textContent = contact;
+      return p;
+    }
+
+    function element(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined) node.textContent = text;
+      return node;
+    }
+
+    function link(text, url, kind) {
+      const anchor = element('a', kind ? 'button ' + kind : '', text);
+      anchor.href = url;
+      anchor.rel = 'noopener noreferrer';
+      anchor.target = '_blank';
+      anchor.referrerPolicy = 'no-referrer';
+      return anchor;
+    }
+
+    function isEmail(value) {
+      return typeof value === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    function isHttps(value) {
+      return typeof value === 'string' && /^https:\/\//i.test(value);
+    }
+
+    function message(title, detail, isError) {
+      const box = element('div', 'state' + (isError ? ' error' : ''));
+      box.appendChild(element('strong', '', title));
+      if (detail) box.appendChild(element('span', '', detail));
+      return box;
+    }
+  </script>
+</body>
+</html>

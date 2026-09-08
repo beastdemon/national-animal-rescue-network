@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base target="_blank">
+  <title>Resources — The National Animal Rescue Network</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       NARN — "The Relay" component theme (final, merged system)
+       Shared drop-in styles for every NARN mini-app embed.
+       Selectors listed in the brand contract are never renamed —
+       new mini-apps may ADD classes but must reuse this exact set.
+       ============================================================ */
+
+    :root {
+      /* ---- brand palette ---- */
+      --primary: #1F3D2E;         /* deep forest ink — headings, dark UI, masthead */
+      --primary-rgb: 31, 61, 46;
+      --primaryDark: #12231A;     /* near-black forest — pressed states, id/count stamps */
+      --primaryDark-rgb: 18, 35, 26;
+      --accent: #C63F17;          /* flare-orange — primary CTA, urgent badge, focus ring */
+      --accent-rgb: 198, 63, 23;
+      --accent-pressed: #8A2C10;  /* struck-shadow shade under the primary button */
+      --accentAlt: #C98A1D;       /* marigold gold — needed/in-progress signal, funding bars */
+      --accentAlt-rgb: 201, 138, 29;
+      --background: #F5EEDF;      /* warm parchment page ground */
+      --surface: #FFFCF5;         /* warm ivory card/panel stock */
+      --ink: #211C15;             /* true warm near-black — reading text, deliberately NOT green */
+      --inkMuted: #5B5445;        /* warm taupe — meta, captions, fine print */
+      --line: #D9C9A0;            /* warm khaki border — reads like cut cardstock, not a UI grey */
+
+      /* ---- structural tokens ---- */
+      --shadow: 0 20px 40px -18px rgba(18, 35, 26, .42), 0 2px 8px rgba(18, 35, 26, .08);
+      --shadow-hover: 0 26px 48px -18px rgba(18, 35, 26, .5), 0 3px 10px rgba(18, 35, 26, .1);
+      --radius: 10px;      /* cards, panels, filter bar, state blocks */
+      --radius-sm: 6px;    /* buttons, inputs, badges, chips, id tags — sharper, "tag" scale */
+    }
+
+    * { box-sizing: border-box; }
+
+    img { max-width: 100%; }
+
+    ::selection { background: var(--accentAlt); color: var(--primaryDark); }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      position: relative;
+      color: var(--ink);
+      background-color: var(--background);
+      background-image: radial-gradient(rgba(33, 28, 21, .045) 1px, transparent 1.5px);
+      background-size: 16px 16px;
+      font-family: 'IBM Plex Sans', 'Segoe UI', Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Masthead stripe — the one graphic device every embedded NARN page shares,
+       so a dozen separate Google Sites mini-apps still read as one product. */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--accent), var(--accentAlt));
+      z-index: 1000;
+    }
+
+    .shell { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: 34px 0 52px; }
+
+    .intro {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 24px;
+      padding-bottom: 18px;
+      border-bottom: 2px dashed var(--line);
+    }
+
+    h1 {
+      position: relative;
+      margin: 0 0 8px;
+      padding-left: 20px;
+      color: var(--primary);
+      font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+      font-weight: 800;
+      font-size: clamp(1.9rem, 4.2vw, 2.9rem);
+      line-height: 1.06;
+      letter-spacing: -0.01em;
+      text-wrap: balance;
+    }
+    h1::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 0.12em; bottom: 0.12em;
+      width: 6px;
+      border-radius: 2px;
+      background: var(--accent);
+    }
+
+    .intro p { margin: 0; max-width: 700px; color: var(--inkMuted); font-size: 1.02rem; }
+
+    .count {
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+      background: var(--primaryDark);
+      color: #fff;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-weight: 600;
+      font-size: .82rem;
+      letter-spacing: .02em;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* ---------- Filters ---------- */
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      padding: 16px;
+      margin-bottom: 26px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    label {
+      display: grid;
+      gap: 5px;
+      font-family: 'IBM Plex Sans', Arial, sans-serif;
+      font-size: .74rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    input, select {
+      width: 100%;
+      min-height: 43px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 9px 11px;
+      color: var(--ink);
+      background: var(--surface);
+      font: inherit;
+    }
+    input::placeholder { color: var(--inkMuted); opacity: .8; }
+    input:focus-visible, select:focus-visible {
+      outline: 3px solid rgba(var(--accent-rgb), .35);
+      outline-offset: 2px;
+      border-color: var(--accent);
+    }
+    a:focus-visible, button:focus-visible, .tab:focus-visible {
+      outline: 3px solid rgba(var(--accent-rgb), .35);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 930px) {
+      .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 620px) {
+      .intro { align-items: flex-start; flex-direction: column; }
+      .filters { grid-template-columns: 1fr; }
+    }
+
+    /* ---------- Card grid ---------- */
+
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+
+    @media (max-width: 930px) {
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 620px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+
+    .photo-wrap { position: relative; aspect-ratio: 4 / 3; background: var(--line); overflow: hidden; }
+    .photo { width: 100%; height: 100%; display: block; object-fit: cover; }
+    .photo-fallback {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+      color: var(--primary);
+      font-size: 3.4rem;
+      background: linear-gradient(160deg, var(--line), var(--background));
+    }
+
+    /* Clipped "luggage tag" corner — the identity's signature shape, tying every
+       status badge back to the relay/manifest metaphor instead of a generic pill. */
+    .badge {
+      position: absolute;
+      top: 12px; left: 12px;
+      padding: 6px 12px 6px 10px;
+      background: var(--primaryDark);
+      color: #fff;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-weight: 600;
+      font-size: .72rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      border-radius: 3px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .25);
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    }
+    .badge.urgent { background: var(--accent); }
+    .badge.needed { background: var(--accentAlt); color: var(--primaryDark); }
+
+    .body { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+
+    .title-row { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+
+    h2 {
+      margin: 0;
+      color: var(--primary);
+      font-family: 'Fraunces', Georgia, serif;
+      font-weight: 700;
+      font-size: 1.42rem;
+      line-height: 1.15;
+    }
+
+    .id {
+      white-space: nowrap;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-size: .72rem;
+      font-weight: 500;
+      color: var(--inkMuted);
+      background: var(--background);
+      border: 1px solid var(--line);
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    .meta { margin: 7px 0 12px; color: var(--inkMuted); font-size: .93rem; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .chip {
+      border-radius: var(--radius-sm);
+      padding: 4px 10px;
+      background: rgba(var(--primary-rgb), .08);
+      border: 1px solid rgba(var(--primary-rgb), .18);
+      color: var(--primary);
+      font-size: .76rem;
+      font-weight: 700;
+      letter-spacing: .01em;
+    }
+
+    .description {
+      display: -webkit-box;
+      overflow: hidden;
+      min-height: 4.5em;
+      margin: 0 0 12px;
+      color: var(--ink);
+      font-size: .95rem;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+
+    .compatibility { margin: 0 0 13px; font-size: .82rem; color: var(--inkMuted); }
+
+    .verified {
+      margin: 0 0 14px;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-size: .72rem;
+      letter-spacing: .02em;
+      color: var(--inkMuted);
+    }
+
+    /* Dashed "tear line" above actions — you tear the stub and go. */
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 2px dashed var(--line);
+    }
+
+    .button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 42px;
+      border-radius: var(--radius-sm);
+      padding: 9px 16px;
+      border: 2px solid transparent;
+      text-decoration: none;
+      font-family: 'IBM Plex Sans', Arial, sans-serif;
+      font-weight: 700;
+      font-size: .94rem;
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease, transform .12s ease, box-shadow .12s ease;
+    }
+
+    /* Primary reads like a stamped, pressable badge rather than a soft app glow. */
+    .button.primary {
+      color: #fff;
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 3px 0 var(--accent-pressed);
+    }
+    .button.primary:hover { transform: translateY(-1px); box-shadow: 0 4px 0 var(--accent-pressed); }
+    .button.primary:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--accent-pressed); }
+
+    .button.secondary { color: var(--primary); background: var(--surface); border-color: var(--primary); }
+    .button.secondary:hover { background: rgba(var(--primary-rgb), .06); }
+    .button.secondary:active { transform: translateY(1px); }
+
+    .state {
+      grid-column: 1 / -1;
+      padding: 40px 20px;
+      text-align: center;
+      background: var(--surface);
+      border: 2px dashed var(--line);
+      border-radius: var(--radius);
+    }
+    .state strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--primary);
+      font-family: 'Fraunces', Georgia, serif;
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+    .state span { color: var(--inkMuted); }
+    .state.error { border-style: solid; border-color: rgba(var(--accent-rgb), .4); }
+    .state.error strong { color: var(--accent-pressed); }
+
+    /* ============================================================
+       Additions for this mini-app: resource cards (no photo)
+       ============================================================ */
+
+    .resource-card {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px 20px;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .resource-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+
+    .resource-card h2 { font-size: 1.28rem; }
+
+    .resource-link {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+    }
+    .resource-link:hover, .resource-link:focus-visible {
+      border-bottom-color: var(--accent);
+    }
+
+    .resource-title-plain { color: var(--ink); }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="intro" aria-labelledby="directory-title">
+      <div>
+        <h1 id="directory-title">Resources for the network</h1>
+        <p>Vetted links for pet owners, adopters and fosters, shelters and rescues, and volunteers and transporters. Filter by who you are and where you are, then follow the link straight to the source.</p>
+      </div>
+      <div id="count" class="count" aria-live="polite">Loading…</div>
+    </section>
+
+    <section class="filters" aria-label="Filter resources">
+      <label>Search
+        <input id="search" type="search" autocomplete="off" placeholder="Title, description, or scope">
+      </label>
+      <label>Audience<select id="audience"><option value="">All audiences</option></select></label>
+      <label>State or scope<select id="scope"><option value="">All states / scopes</option></select></label>
+    </section>
+
+    <section id="results" class="grid" aria-live="polite" aria-busy="true">
+      <div class="state"><strong>Loading resources…</strong></div>
+    </section>
+  </main>
+
+  <script>
+    'use strict';
+    let resources = [];
+    const results = document.getElementById('results');
+    const count = document.getElementById('count');
+    const controls = ['search', 'audience', 'scope'].map(id => document.getElementById(id));
+
+    controls.forEach(control => control.addEventListener('input', render));
+
+    google.script.run
+      .withSuccessHandler(data => {
+        resources = Array.isArray(data.resources) ? data.resources : [];
+        populateFilter('audience', unique(resources.map(resource => resource.audience)));
+        populateFilter('scope', unique(resources.map(resource => resource.scope)));
+        results.setAttribute('aria-busy', 'false');
+        render();
+      })
+      .withFailureHandler(error => {
+        results.setAttribute('aria-busy', 'false');
+        results.replaceChildren(message('The resources list could not be loaded.', error && error.message, true));
+        count.textContent = 'Unavailable';
+      })
+      .getResourcesData();
+
+    function render() {
+      const query = document.getElementById('search').value.trim().toLowerCase();
+      const selected = {
+        audience: document.getElementById('audience').value,
+        scope: document.getElementById('scope').value
+      };
+      const filtered = resources.filter(resource => {
+        const haystack = [resource.title, resource.description, resource.scope, resource.audience].join(' ').toLowerCase();
+        return (!query || haystack.includes(query)) &&
+          (!selected.audience || resource.audience === selected.audience) &&
+          (!selected.scope || resource.scope === selected.scope);
+      });
+
+      count.textContent = filtered.length + (filtered.length === 1 ? ' resource' : ' resources');
+      results.replaceChildren();
+      if (!filtered.length) {
+        results.appendChild(message('No resources match these filters.', 'Try clearing one or more filters.'));
+        return;
+      }
+      filtered.forEach(resource => results.appendChild(card(resource)));
+    }
+
+    function card(resource) {
+      const article = element('article', 'resource-card');
+
+      const h2 = document.createElement('h2');
+      if (isHttps(resource.url)) {
+        const anchor = element('a', 'resource-link', resource.title);
+        anchor.href = resource.url;
+        anchor.rel = 'noopener noreferrer';
+        h2.appendChild(anchor);
+      } else {
+        h2.appendChild(element('span', 'resource-title-plain', resource.title));
+      }
+      article.appendChild(h2);
+
+      const chips = element('div', 'chips');
+      chips.appendChild(element('span', 'chip', resource.audience));
+      chips.appendChild(element('span', 'chip', resource.scope));
+      article.appendChild(chips);
+
+      article.appendChild(element('p', 'description', resource.description || 'Description not yet provided.'));
+
+      if (resource.lastReviewed) {
+        article.appendChild(element('p', 'verified', 'Last reviewed: ' + resource.lastReviewed));
+      }
+
+      if (!isHttps(resource.url)) {
+        article.appendChild(element('p', 'verified', 'Link unavailable — check back soon.'));
+      }
+
+      return article;
+    }
+
+    function populateFilter(id, values) {
+      const select = document.getElementById(id);
+      values.forEach(value => {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option);
+      });
+    }
+
+    function unique(values) {
+      return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b));
+    }
+
+    function element(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined) node.textContent = text;
+      return node;
+    }
+
+    function isHttps(url) {
+      return typeof url === 'string' && /^https:\/\//i.test(url);
+    }
+
+    function message(title, detail, isError) {
+      const box = element('div', 'state' + (isError ? ' error' : ''));
+      box.appendChild(element('strong', '', title));
+      if (detail) box.appendChild(element('span', '', detail));
+      return box;
+    }
+  </script>
+</body>
+</html>

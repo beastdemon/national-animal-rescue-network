@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base target="_blank">
+  <title>Newsletter Archive — The National Animal Rescue Network</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       NARN — "The Relay" component theme (final, merged system)
+       Shared drop-in styles for every NARN mini-app embed.
+       Selectors listed in the brand contract are never renamed —
+       new mini-apps may ADD classes but must reuse this exact set.
+       ============================================================ */
+
+    :root {
+      /* ---- brand palette ---- */
+      --primary: #1F3D2E;         /* deep forest ink — headings, dark UI, masthead */
+      --primary-rgb: 31, 61, 46;
+      --primaryDark: #12231A;     /* near-black forest — pressed states, id/count stamps */
+      --primaryDark-rgb: 18, 35, 26;
+      --accent: #C63F17;          /* flare-orange — primary CTA, urgent badge, focus ring */
+      --accent-rgb: 198, 63, 23;
+      --accent-pressed: #8A2C10;  /* struck-shadow shade under the primary button */
+      --accentAlt: #C98A1D;       /* marigold gold — needed/in-progress signal, funding bars */
+      --accentAlt-rgb: 201, 138, 29;
+      --background: #F5EEDF;      /* warm parchment page ground */
+      --surface: #FFFCF5;         /* warm ivory card/panel stock */
+      --ink: #211C15;             /* true warm near-black — reading text, deliberately NOT green */
+      --inkMuted: #5B5445;        /* warm taupe — meta, captions, fine print */
+      --line: #D9C9A0;            /* warm khaki border — reads like cut cardstock, not a UI grey */
+
+      /* ---- structural tokens ---- */
+      --shadow: 0 20px 40px -18px rgba(18, 35, 26, .42), 0 2px 8px rgba(18, 35, 26, .08);
+      --shadow-hover: 0 26px 48px -18px rgba(18, 35, 26, .5), 0 3px 10px rgba(18, 35, 26, .1);
+      --radius: 10px;      /* cards, panels, filter bar, state blocks */
+      --radius-sm: 6px;    /* buttons, inputs, badges, chips, id tags — sharper, "tag" scale */
+    }
+
+    * { box-sizing: border-box; }
+
+    img { max-width: 100%; }
+
+    ::selection { background: var(--accentAlt); color: var(--primaryDark); }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      position: relative;
+      color: var(--ink);
+      background-color: var(--background);
+      background-image: radial-gradient(rgba(33, 28, 21, .045) 1px, transparent 1.5px);
+      background-size: 16px 16px;
+      font-family: 'IBM Plex Sans', 'Segoe UI', Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Masthead stripe — the one graphic device every embedded NARN page shares,
+       so a dozen separate Google Sites mini-apps still read as one product. */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--accent), var(--accentAlt));
+      z-index: 1000;
+    }
+
+    .shell { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: 34px 0 52px; }
+
+    .intro {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 24px;
+      padding-bottom: 18px;
+      border-bottom: 2px dashed var(--line);
+    }
+
+    h1 {
+      position: relative;
+      margin: 0 0 8px;
+      padding-left: 20px;
+      color: var(--primary);
+      font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+      font-weight: 800;
+      font-size: clamp(1.9rem, 4.2vw, 2.9rem);
+      line-height: 1.06;
+      letter-spacing: -0.01em;
+      text-wrap: balance;
+    }
+    h1::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 0.12em; bottom: 0.12em;
+      width: 6px;
+      border-radius: 2px;
+      background: var(--accent);
+    }
+
+    .intro p { margin: 0; max-width: 700px; color: var(--inkMuted); font-size: 1.02rem; }
+
+    .count {
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+      background: var(--primaryDark);
+      color: #fff;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-weight: 600;
+      font-size: .82rem;
+      letter-spacing: .02em;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+    }
+
+    label {
+      display: grid;
+      gap: 5px;
+      font-family: 'IBM Plex Sans', Arial, sans-serif;
+      font-size: .74rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    input, select {
+      width: 100%;
+      min-height: 43px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 9px 11px;
+      color: var(--ink);
+      background: var(--surface);
+      font: inherit;
+    }
+    input::placeholder { color: var(--inkMuted); opacity: .8; }
+    input:focus-visible, select:focus-visible {
+      outline: 3px solid rgba(var(--accent-rgb), .35);
+      outline-offset: 2px;
+      border-color: var(--accent);
+    }
+    a:focus-visible, button:focus-visible, .tab:focus-visible {
+      outline: 3px solid rgba(var(--accent-rgb), .35);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 620px) {
+      .intro { align-items: flex-start; flex-direction: column; }
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+
+    /* Clipped "luggage tag" corner — the identity's signature shape, tying every
+       status badge back to the relay/manifest metaphor instead of a generic pill. */
+    .badge {
+      position: absolute;
+      top: 12px; left: 12px;
+      padding: 6px 12px 6px 10px;
+      background: var(--primaryDark);
+      color: #fff;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-weight: 600;
+      font-size: .72rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      border-radius: 3px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .25);
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    }
+    .badge.urgent { background: var(--accent); }
+    .badge.needed { background: var(--accentAlt); color: var(--primaryDark); }
+
+    /* This app's badge sits inline above a heading instead of pinned over a
+       photo-wrap, so it needs the static/inline modifier already established
+       by the foster-openings and current-needs mini-apps. */
+    .badge.inline {
+      position: static;
+      display: inline-flex;
+      box-shadow: none;
+    }
+
+    .body { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+
+    h2 {
+      margin: 0;
+      color: var(--primary);
+      font-family: 'Fraunces', Georgia, serif;
+      font-weight: 700;
+      font-size: 1.42rem;
+      line-height: 1.15;
+    }
+
+    .verified {
+      margin: 0 0 14px;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-size: .72rem;
+      letter-spacing: .02em;
+      color: var(--inkMuted);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 2px dashed var(--line);
+    }
+
+    .button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 42px;
+      border-radius: var(--radius-sm);
+      padding: 9px 16px;
+      border: 2px solid transparent;
+      text-decoration: none;
+      font-family: 'IBM Plex Sans', Arial, sans-serif;
+      font-weight: 700;
+      font-size: .94rem;
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease, transform .12s ease, box-shadow .12s ease;
+    }
+
+    /* Primary reads like a stamped, pressable badge rather than a soft app glow. */
+    .button.primary {
+      color: #fff;
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 3px 0 var(--accent-pressed);
+    }
+    .button.primary:hover { transform: translateY(-1px); box-shadow: 0 4px 0 var(--accent-pressed); }
+    .button.primary:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--accent-pressed); }
+
+    .button.secondary { color: var(--primary); background: var(--surface); border-color: var(--primary); }
+    .button.secondary:hover { background: rgba(var(--primary-rgb), .06); }
+    .button.secondary:active { transform: translateY(1px); }
+
+    .state {
+      padding: 40px 20px;
+      text-align: center;
+      background: var(--surface);
+      border: 2px dashed var(--line);
+      border-radius: var(--radius);
+    }
+    .state strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--primary);
+      font-family: 'Fraunces', Georgia, serif;
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+    .state span { color: var(--inkMuted); }
+    .state.error { border-style: solid; border-color: rgba(var(--accent-rgb), .4); }
+    .state.error strong { color: var(--accent-pressed); }
+
+    /* ============================================================
+       Additions for this mini-app: latest-issue card + grouped list
+       ============================================================ */
+
+    .latest-card {
+      position: relative;
+      margin-bottom: 30px;
+      padding: 24px 26px;
+      border-left: 5px solid var(--accent);
+    }
+    .latest-card .badge { margin-bottom: 12px; }
+    .latest-card h2 { font-size: 1.7rem; margin-bottom: 6px; }
+    .latest-card .verified { margin-bottom: 16px; }
+
+    .archive-list { display: flex; flex-direction: column; gap: 26px; }
+
+    .year-group {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .year-heading {
+      margin: 0;
+      padding: 12px 20px;
+      background: rgba(var(--primary-rgb), .06);
+      border-bottom: 2px dashed var(--line);
+      color: var(--primary);
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-weight: 600;
+      font-size: .86rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .issue-rows { list-style: none; margin: 0; padding: 0; }
+
+    .issue-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px 20px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+    .issue-row:last-child { border-bottom: none; }
+
+    .issue-row .issue-title {
+      color: var(--ink);
+      font-family: 'Fraunces', Georgia, serif;
+      font-weight: 600;
+      font-size: 1.08rem;
+    }
+    a.issue-title {
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+    }
+    a.issue-title:hover, a.issue-title:focus-visible { border-bottom-color: var(--accent); }
+
+    .issue-row .issue-date {
+      white-space: nowrap;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-size: .78rem;
+      color: var(--inkMuted);
+    }
+
+    .archive-note {
+      margin-top: 30px;
+      padding-top: 18px;
+      border-top: 2px dashed var(--line);
+      color: var(--inkMuted);
+      font-size: .92rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="intro" aria-labelledby="archive-title">
+      <div>
+        <h1 id="archive-title">Newsletter archive</h1>
+        <p>Every issue we've sent, in one place. Read the latest below, or dig back through past months for an update you missed.</p>
+      </div>
+      <div id="count" class="count" aria-live="polite">Loading…</div>
+    </section>
+
+    <section id="archive" aria-live="polite" aria-busy="true">
+      <div class="state"><strong>Loading the archive…</strong></div>
+    </section>
+
+    <p class="archive-note">Want new issues sent to you directly? The sign-up form for that lives elsewhere on this site — this page is the archive, not the subscription.</p>
+  </main>
+
+  <script>
+    'use strict';
+    const archive = document.getElementById('archive');
+    const count = document.getElementById('count');
+
+    google.script.run
+      .withSuccessHandler(data => {
+        const issues = Array.isArray(data.issues) ? data.issues : [];
+        archive.setAttribute('aria-busy', 'false');
+        render(issues);
+      })
+      .withFailureHandler(error => {
+        archive.setAttribute('aria-busy', 'false');
+        archive.replaceChildren(message('The newsletter archive could not be loaded.', error && error.message, true));
+        count.textContent = 'Unavailable';
+      })
+      .getNewsletterArchiveData();
+
+    function render(issues) {
+      count.textContent = issues.length + (issues.length === 1 ? ' issue' : ' issues');
+      archive.replaceChildren();
+
+      if (!issues.length) {
+        archive.appendChild(message('No issues in the archive yet.', 'Check back after the next send.'));
+        return;
+      }
+
+      // Issues arrive already sorted most-recent-first. Pick the featured issue
+      // closest to the top as "latest"; otherwise the top issue overall.
+      const latest = issues.find(issue => issue.featured) || issues[0];
+      archive.appendChild(latestCard(latest));
+
+      const rest = issues.filter(issue => issue !== latest);
+      if (rest.length) {
+        archive.appendChild(groupedList(rest));
+      }
+    }
+
+    function latestCard(issue) {
+      const card = element('article', 'card latest-card');
+      card.appendChild(element('span', 'badge inline', 'Latest issue'));
+      card.appendChild(titleNode(issue, 'h2'));
+      if (issue.publishedDate) {
+        card.appendChild(element('p', 'verified', 'Published ' + issue.publishedDate));
+      }
+      const actions = element('div', 'actions');
+      if (isHttps(issue.url)) {
+        actions.appendChild(link('Read this issue', issue.url, 'primary'));
+      } else {
+        actions.appendChild(element('span', 'verified', 'Link unavailable — check back soon.'));
+      }
+      card.appendChild(actions);
+      return card;
+    }
+
+    function groupedList(issues) {
+      const wrap = element('div', 'archive-list');
+      const years = [];
+      const byYear = {};
+      issues.forEach(issue => {
+        const year = issue.year || 'Undated';
+        if (!byYear[year]) { byYear[year] = []; years.push(year); }
+        byYear[year].push(issue);
+      });
+
+      years.forEach(year => {
+        const group = element('section', 'year-group');
+        group.setAttribute('aria-label', year);
+        group.appendChild(element('h3', 'year-heading', year));
+        const list = element('ul', 'issue-rows');
+        byYear[year].forEach(issue => list.appendChild(issueRow(issue)));
+        group.appendChild(list);
+        wrap.appendChild(group);
+      });
+
+      return wrap;
+    }
+
+    function issueRow(issue) {
+      const row = element('li', 'issue-row');
+      row.appendChild(titleNode(issue, 'span'));
+      if (issue.publishedDate) {
+        row.appendChild(element('span', 'issue-date', issue.publishedDate));
+      }
+      return row;
+    }
+
+    function titleNode(issue, wrapperTag) {
+      const inner = isHttps(issue.url) ? anchor(issue.title, issue.url) : element('span', 'issue-title', issue.title);
+      inner.classList.add('issue-title');
+      if (wrapperTag === 'span') return inner;
+      const heading = document.createElement(wrapperTag);
+      heading.appendChild(inner);
+      return heading;
+    }
+
+    function element(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined) node.textContent = text;
+      return node;
+    }
+
+    function link(text, url, kind) {
+      const node = anchor(text, url);
+      node.className = 'button ' + kind;
+      return node;
+    }
+
+    function anchor(text, url) {
+      const node = element('a', '', text);
+      node.href = url;
+      node.rel = 'noopener noreferrer';
+      return node;
+    }
+
+    function isHttps(url) {
+      return typeof url === 'string' && /^https:\/\//i.test(url);
+    }
+
+    function message(title, detail, isError) {
+      const box = element('div', 'state' + (isError ? ' error' : ''));
+      box.appendChild(element('strong', '', title));
+      if (detail) box.appendChild(element('span', '', detail));
+      return box;
+    }
+  </script>
+</body>
+</html>

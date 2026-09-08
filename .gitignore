@@ -1,0 +1,7 @@
+# Generated/redundant packaging artifact — regenerate with the packaging step in LAUNCH_GUIDE.md
+NARN-Google-Sites-Build-Kit.zip
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
