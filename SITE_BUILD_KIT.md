@@ -67,7 +67,7 @@ Keep the top navigation task-based. Make **Give** the final and visually distinc
    - Resources
 7. About
    - Mission & How the Network Works
-   - State Representatives
+   - State Champions
    - Board & Meetings
    - Contact
 8. Give
@@ -265,16 +265,18 @@ Organize by audience rather than one long list:
 
 Every resource needs a title, audience, scope/state, short description, URL, and last-reviewed date.
 
-### Board of State Representatives
+### State Champions
 
-One representative per state speaks for the network and the dogs in its care to their own state's government — building relationships with state legislators, showing up when animal-welfare bills or shelter/rescue regulation come up, and keeping the network's needs visible at the state level. This is a network volunteer role, not an elected office — do not confuse it with an actual state senator or state representative in the page copy or the application; the distinction matters to avoid misleading anyone about who these people are.
+A "State Champion" is the network's own volunteer advocate for their state — one per state, building relationships with state legislators, showing up when animal-welfare bills or shelter/rescue regulation come up, and keeping the network's needs visible at the state level. This is a network role, not an elected office. It's deliberately not called "state representative" or "state senator" — those are the actual titles of real elected officials, and this same page also references real ones (below), so the naming has to stay unambiguous everywhere: page copy, the application, and the Sheet columns behind it.
 
-**Note for the board:** organized legislative advocacy by a 501(c)(3) has real IRS limits on lobbying activity. Keep public copy and the application framed as relationship-building and policy advocacy, not a formal lobbying operation, until legal counsel has reviewed what the network's reps can and can't do under the org's eventual tax-exempt status.
+**Note for the board:** organized legislative advocacy by a 501(c)(3) has real IRS limits on lobbying activity. Keep public copy and the application framed as relationship-building and policy advocacy, not a formal lobbying operation, until legal counsel has reviewed what Champions can and can't do under the org's eventual tax-exempt status.
 
 Page structure:
-- **Meet our representatives** — a card per state showing (with the rep's consent) a photo, name, short bio/message about why they serve, and a public-safe contact (an organization alias like `texas@yourdomain.org` or a public link — never a personal phone number or address).
-- **Open seats** — states without a rep show "Representative needed" and an apply link, same as today.
-- **Apply** — links to the dedicated State Representative / Board Application (see `FORM_BLUEPRINTS.md`), not the general volunteer form.
+- **Meet our Champions** — a card per state showing (with the Champion's consent) a photo, name, short bio/message about why they serve, and a public-safe contact (an organization alias like `texas@yourdomain.org` or a public link — never a personal phone number or address).
+- **Open seats** — states without a Champion show "Champion needed" and an apply link, same as today.
+- **Federal delegation, for reference** — each state's card also lists that state's actual, real US Senators and US House Representatives (name, and for House members their district), each linking to that official's own senate.gov/house.gov contact page. This is factual reference information about real government officials, not an endorsement of any of them, and it is unrelated to whether that state has a network Champion.
+- **Find your state senator or state representative** — a single link near the top of the page to [Congress.gov's index of every state legislature's website](https://www.congress.gov/state-legislature-websites), rather than trying to list every state senator/representative directly (there are often 100+ per state, redrawn and re-elected far more often than a small nonprofit can hand-track — see `apps-script/state-champions/SETUP.md` for why this is a link-out, not a roster).
+- **Apply** — links to the dedicated State Champion Application (see `FORM_BLUEPRINTS.md`), not the general volunteer form.
 
 ### Board & Meetings
 
@@ -344,12 +346,13 @@ No outside submission should publish automatically.
 - Adoption, foster, evaluation, partner, transport, volunteer, privacy, retention, and safety policies
 - Donation processor, fund terms, receipt language, and approved Amazon wishlists
 - Board member/public meeting information approved for publication
-- State representative names, public aliases, and photo/bio consent
+- State Champion names, public aliases, and photo/bio consent
 - Named rescues/shelters/animal control centers and their permission to publish animals and capacity
 - Aviation partnership structure and points of contact are still undecided — keep the public "Aviation Partnership Inquiry" page generic until this is settled, and do not publish any individual's name until their role and publication consent are confirmed
 - Email/newsletter platform and sender address
 - Custom domain and Analytics property, if available
 - The real, published General Volunteer Application Google Form URL — `apps-script/get-involved/Code.gs` ships with a placeholder (`GENERAL_VOLUNTEER_FORM_URL`) that must be replaced before that page goes live
-- Nine new sheet tabs need to be created in the Public Website Content Hub before the corresponding mini-app can go live: Foster Openings, Partner Directory, Volunteer Needs (optional), State Representatives, Current Needs, Resources, Give Funds, Wishlists, Future Projects, and Newsletter Archive — exact column headers for each are in that mini-app's `SETUP.md`
+- Nine new sheet tabs need to be created in the Public Website Content Hub before the corresponding mini-app can go live: Foster Openings, Partner Directory, Volunteer Needs (optional), State Champions, Congressional Delegation (optional — real US Senators/Representatives, see below), Current Needs, Resources, Give Funds, Wishlists, Future Projects, and Newsletter Archive — exact column headers for each are in that mini-app's `SETUP.md`
+- Congressional Delegation data (real US Senators and House Representatives per state) needs to be sourced from senate.gov/house.gov, not guessed — see `apps-script/state-champions/SETUP.md`. It's optional and can be filled in after launch; the State Champions roster works fine without it.
 - Four more new tabs need to be created on the **Private Operations Tracker** (not the public hub) for `transport-tracking`: Transports, Transport Waypoints, Transport Checkpoints, Transport Admins — see `apps-script/transport-tracking/SETUP.md`. At least one Transport Admin email (a coordinator or board member) needs to be decided before that tool is useful.
 

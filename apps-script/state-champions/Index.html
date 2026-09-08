@@ -375,14 +375,55 @@
       color: var(--inkMuted);
       font-size: .93rem;
     }
+
+    /* Federal delegation — reference-only, supplementary to the Champion
+       content above it, so it's visually quieter and collapsed by default
+       on states with a long US House delegation. */
+    .delegation {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+    .delegation summary {
+      cursor: pointer;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: .85rem;
+      list-style: none;
+    }
+    .delegation summary::-webkit-details-marker { display: none; }
+    .delegation summary::before { content: '▸ '; }
+    .delegation[open] summary::before { content: '▾ '; }
+    .delegation-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
+    .delegation-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      font-size: .87rem;
+    }
+    .delegation-name { color: var(--ink); }
+    .delegation-chamber { color: var(--inkMuted); font-size: .78rem; }
+    .delegation-link { color: var(--primary); font-weight: 600; text-decoration: underline; white-space: nowrap; }
+    .find-legislators {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: .92rem;
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
   <main class="shell">
     <section class="intro" aria-labelledby="roster-title">
       <div>
-        <h1 id="roster-title">Board of State Representatives</h1>
-        <p>One representative per state speaks for the network and the dogs in our care to their own state's government — building relationships with legislators and showing up for the policy decisions that affect shelters and rescues. Meet who's serving below, or apply for an open state.</p>
+        <h1 id="roster-title">State Champions</h1>
+        <p>A State Champion is the network's own volunteer advocate for their state — not an elected official — who builds relationships with lawmakers and shows up for the policy decisions that affect shelters and rescues on behalf of the network and its dogs. Meet who's serving below, or apply for an open state. Each state's card also lists its actual US Senators and US House Representatives for reference.</p>
+        <a class="find-legislators" href="https://www.congress.gov/state-legislature-websites" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Find your state senator or state representative →</a>
       </div>
       <div id="count" class="count" aria-live="polite">Loading…</div>
     </section>
@@ -418,7 +459,7 @@
         roster.replaceChildren(message('The roster could not be loaded.', error && error.message, true));
         count.textContent = 'Unavailable';
       })
-      .getStateRepData();
+      .getStateChampionsData();
 
     function render() {
       const query = search.value.trim().toLowerCase();
@@ -447,7 +488,7 @@
           const image = document.createElement('img');
           image.className = 'photo';
           image.src = row.photoUrl;
-          image.alt = row.repName ? row.repName + ', representative for ' + row.state : row.state + ' representative';
+          image.alt = row.championName ? row.championName + ', State Champion for ' + row.state : row.state + ' State Champion';
           image.loading = 'lazy';
           image.referrerPolicy = 'no-referrer';
           image.addEventListener('error', () => image.replaceWith(fallback()));
@@ -462,26 +503,62 @@
 
       const titleRow = element('div', 'title-row');
       titleRow.appendChild(element('h2', '', row.state));
-      titleRow.appendChild(element('span', 'badge inline' + (needed ? ' needed' : ''), needed ? 'Representative needed' : 'Filled'));
+      titleRow.appendChild(element('span', 'badge inline' + (needed ? ' needed' : ''), needed ? 'Champion needed' : 'Filled'));
       body.appendChild(titleRow);
 
       if (needed) {
-        body.appendChild(element('p', 'open-note', 'This state doesn’t have a representative yet. Apply to advocate for the network and its dogs here.'));
+        body.appendChild(element('p', 'open-note', 'This state doesn’t have a Champion yet. Apply to advocate for the network and its dogs here.'));
         const actions = element('div', 'actions');
         if (isHttps(row.applyUrl)) {
-          actions.appendChild(link('Apply to represent your state', row.applyUrl, 'primary'));
+          actions.appendChild(link('Apply to be this state’s Champion', row.applyUrl, 'primary'));
         } else {
           body.appendChild(element('p', 'contact-line', 'Apply link coming soon.'));
         }
         if (actions.childNodes.length) body.appendChild(actions);
       } else {
-        if (row.repName) body.appendChild(element('p', 'rep-name', row.repName));
+        if (row.championName) body.appendChild(element('p', 'rep-name', row.championName));
         if (row.bio) body.appendChild(element('p', 'description', row.bio));
         body.appendChild(contactLine(row.contact));
       }
 
+      if (Array.isArray(row.delegation) && row.delegation.length) {
+        body.appendChild(delegationDetails(row.delegation));
+      }
+
       article.appendChild(body);
       return article;
+    }
+
+    function delegationDetails(delegation) {
+      const details = document.createElement('details');
+      details.className = 'delegation';
+      const summary = document.createElement('summary');
+      summary.textContent = 'Federal delegation (' + delegation.length + ')';
+      details.appendChild(summary);
+
+      const list = element('ul', 'delegation-list');
+      delegation.forEach(person => {
+        const li = document.createElement('li');
+        const nameWrap = element('span', '');
+        const nameSpan = element('span', 'delegation-name', person.name);
+        nameWrap.appendChild(nameSpan);
+        const chamberText = person.chamber === 'House' && person.district
+          ? ' — U.S. House, District ' + person.district
+          : (person.chamber === 'Senate' ? ' — U.S. Senate' : ' — U.S. House');
+        nameWrap.appendChild(element('span', 'delegation-chamber', chamberText));
+        li.appendChild(nameWrap);
+        if (isHttps(person.contactUrl)) {
+          const anchor = element('a', 'delegation-link', 'Contact');
+          anchor.href = person.contactUrl;
+          anchor.rel = 'noopener noreferrer';
+          anchor.target = '_blank';
+          anchor.referrerPolicy = 'no-referrer';
+          li.appendChild(anchor);
+        }
+        list.appendChild(li);
+      });
+      details.appendChild(list);
+      return details;
     }
 
     function fallback() {
@@ -491,7 +568,7 @@
     function contactLine(contact) {
       const p = element('p', 'contact-line');
       if (!contact) {
-        p.textContent = 'Contact headquarters to reach this state’s rep.';
+        p.textContent = 'Contact headquarters to reach this state’s Champion.';
         return p;
       }
       if (isEmail(contact)) {

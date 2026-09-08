@@ -48,7 +48,7 @@ Role branches:
 - **Photography:** camera/equipment, portfolio URL, editing experience, service radius, availability, rights/release acknowledgment.
 - **Advocacy:** topics, state/district, speaking/writing/social skills, non-harassment and accuracy pledge.
 - **Events:** event experience, lifting/setup ability, fundraising/cash-handling interest, schedule.
-- **State representative:** do not collect this inline. Point applicants to the dedicated State Representative / Board Application (form 13 below) instead — this is a board-level advocacy role, not a checkbox on the general form.
+- **State Champion:** do not collect this inline. Point applicants to the dedicated State Champion Application (form 13 below) instead — this is a distinct advocacy role, not a checkbox on the general form. Never call this role "state representative" — that's the title of an actual elected official.
 - **Administrative/general:** skills, software, scheduling, data entry, outreach, grant research.
 
 ## 4. Dog Evaluator Application
@@ -121,11 +121,11 @@ Fields: name; email; state; topic—general, media, local news/story, resource s
 
 Display a notice if the organization is not a 24/7 emergency service. Provide appropriate crisis resources instead of implying immediate response.
 
-## 13. State Representative / Board Application
+## 13. State Champion Application
 
 Audience: public. File upload: no.
 
-This is a board-level advocacy role, not a local-coordinator checkbox — one person per state who builds relationships with their state's legislators and shows up for animal-welfare and shelter/rescue policy on the network's behalf. It is deliberately a separate, fuller application from the General Volunteer Application, the same way the Dog Evaluator Application is separate from it.
+A "State Champion" is the network's own advocacy role, not an elected office — never call it "state representative" or "state senator" on this form, since those are the actual titles of real elected officials the site also references elsewhere (see the state-champions mini-app's Congressional Delegation section). One Champion per state builds relationships with their state's actual legislators and shows up for animal-welfare and shelter/rescue policy on the network's behalf. It is deliberately a separate, fuller application from the General Volunteer Application, the same way the Dog Evaluator Application is separate from it.
 
 Sections and fields:
 

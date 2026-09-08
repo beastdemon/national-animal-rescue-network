@@ -13,7 +13,7 @@ Nothing below can be finished until these are settled. Most of the build work (s
 - [ ] Adoption, foster, evaluation, partner, transport, volunteer, privacy, retention, and safety policies
 - [ ] Donation processor, fund terms, receipt language — and whether gifts can be called tax-deductible yet (assume no until confirmed)
 - [ ] Board member/public meeting information approved for publication
-- [ ] State representative names, public aliases, and photo/bio consent
+- [ ] State Champion names, public aliases, and photo/bio consent
 - [ ] Named rescues/shelters/animal control centers and their permission to publish animals and capacity
 - [ ] **Aviation partnership structure — still undecided.** Keep the public "Aviation Partnership Inquiry" page generic. Do not name any individual publicly until their role and consent are confirmed.
 - [ ] **The real General Volunteer Application Google Form URL.** `apps-script/get-involved/Code.gs` ships with a placeholder (`GENERAL_VOLUNTEER_FORM_URL`) — the Get Involved page's nine "Apply for this role" buttons will not work until this is replaced.
@@ -55,7 +55,7 @@ Each mini-app lives in its own `apps-script/<name>/` folder with its own `SETUP.
 | `foster-openings` | `Foster Openings` | — |
 | `partner-directory` | `Partner Directory` | — |
 | `get-involved` | *(none required)* | Real `GENERAL_VOLUNTEER_FORM_URL` in `Code.gs`; optional `Volunteer Needs` tab for urgent callouts |
-| `state-representatives` | `State Representatives` | — |
+| `state-champions` | `State Champions` | `Congressional Delegation` tab optional (real US Senators/Representatives, sourced from senate.gov/house.gov) |
 | `current-needs` | `Current Needs` | Staff-curated only — never point this at a raw operational tab |
 | `resources-directory` | `Resources` | — |
 | `give-hub` | `Give Funds`, `Wishlists`, `Future Projects` | — |

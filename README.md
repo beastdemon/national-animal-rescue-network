@@ -13,7 +13,7 @@ This folder contains the first working foundation for a Google Sites website and
   - `foster-openings/` — filterable board of open foster needs.
   - `partner-directory/` — shelter/rescue/animal-control partner directory with auto-staling capacity status.
   - `get-involved/` — the nine volunteer role cards, deep-linking to the general volunteer application.
-  - `state-representatives/` — "meet our representatives" roster (consent-gated photo + bio per state) and open-seat applications for the Board of State Representatives, the network's state-level advocacy role.
+  - `state-champions/` — "meet our Champions" roster (consent-gated photo + bio per state) and open-seat applications for the network's own state-level advocacy role — clearly distinct from actual elected officials. Each state's card also lists that state's real US Senators and US House Representatives for reference, and the page links out to Congress.gov's directory of state legislature sites rather than hand-tracking state senators/representatives.
   - `current-needs/` — compact homepage widget for the top 3 curated urgent needs.
   - `resources-directory/` — filterable resource list by audience.
   - `give-hub/` — fund designations, Amazon wishlists, and future-project funding progress in one tabbed page.
