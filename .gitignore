@@ -5,3 +5,7 @@ NARN-Google-Sites-Build-Kit.zip
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Local tool state — not part of the project
+.playwright-mcp/
+.kiro/

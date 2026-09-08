@@ -4,6 +4,7 @@ This folder contains the first working foundation for a Google Sites website and
 
 ## What is ready
 
+- `SITE_ASSEMBLY_GUIDE.md` — the click-by-click guide to actually building the Google Site: theme setup (exact hex codes/fonts), page order, per-page cleanup, and where each embed goes. Start here if you're the one clicking.
 - `SITE_BUILD_KIT.md` — navigation, page layouts, ready-to-paste copy, the "Relay" brand system, and launch order.
 - `FORM_BLUEPRINTS.md` — exact purpose, fields, branching, access, and confirmation copy for the recommended Google Forms.
 - `IMPLEMENTATION_CHECKLIST.md` — a practical build and launch checklist for Google Sites, Forms, Sheets, Calendar, Maps, donations, and newsletter delivery.

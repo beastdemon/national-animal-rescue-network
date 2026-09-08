@@ -40,7 +40,10 @@ Nothing below can be finished until these are settled. Most of the build work (s
 
 ## 4. Build the Google Site
 
-- [ ] Create the public Google Site. Apply the "Relay" brand direction from `SITE_BUILD_KIT.md` section 2 (palette, fonts, voice) as closely as the Sites theme editor allows.
+**See `SITE_ASSEMBLY_GUIDE.md` for the full click-by-click walkthrough** — theme setup with exact hex codes and fonts, page order, the per-page cleanup recipe, and where each app/form embeds. This section is just the checklist version:
+
+- [ ] Create the public Google Site. Set up the "Relay" custom theme (colors + Fraunces/IBM Plex Sans fonts) first — it cascades to every page built after.
+- [ ] Fix page order and nest Contact under About.
 - [ ] Upload `assets/narn-homepage-hero.png` as the homepage hero.
 - [ ] Build pages and navigation per `SITE_BUILD_KIT.md` sections 3–5 (nav structure, homepage blocks, and per-page copy). Build Home, About, Contact, Get Involved, Give, and Resources first — the rest can follow.
 - [ ] Embed the relevant Google Form on each application/submission page (Adoption Application, Foster Application, Partner Application, Evaluator Application, Transport Request, Event Proposal, Newsletter Signup, Contact).
@@ -87,6 +90,7 @@ Run every item in `IMPLEMENTATION_CHECKLIST.md` — it's the full pre-launch aud
 
 | File | What it's for |
 |---|---|
+| `SITE_ASSEMBLY_GUIDE.md` | Click-by-click guide to actually building the Google Site pages (theme, order, cleanup, embeds) |
 | `SITE_BUILD_KIT.md` | Navigation, page-by-page copy, the "Relay" brand system |
 | `FORM_BLUEPRINTS.md` | Exact fields/branching/copy for all 12 Google Forms |
 | `IMPLEMENTATION_CHECKLIST.md` | Full pre-launch QA checklist |
