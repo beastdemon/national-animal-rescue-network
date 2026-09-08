@@ -45,7 +45,7 @@ Nothing below can be finished until these are settled. Most of the build work (s
 - [ ] Build pages and navigation per `SITE_BUILD_KIT.md` sections 3–5 (nav structure, homepage blocks, and per-page copy). Build Home, About, Contact, Get Involved, Give, and Resources first — the rest can follow.
 - [ ] Embed the relevant Google Form on each application/submission page (Adoption Application, Foster Application, Partner Application, Evaluator Application, Transport Request, Event Proposal, Newsletter Signup, Contact).
 
-## 5. Deploy the nine Apps Script mini-apps
+## 5. Deploy the ten Apps Script mini-apps
 
 Each mini-app lives in its own `apps-script/<name>/` folder with its own `SETUP.md` — that file is the authority on the exact tab name, column headers, and deployment steps for that app. This is just the deploy order and what each one needs first:
 
@@ -60,10 +60,11 @@ Each mini-app lives in its own `apps-script/<name>/` folder with its own `SETUP.
 | `resources-directory` | `Resources` | — |
 | `give-hub` | `Give Funds`, `Wishlists`, `Future Projects` | — |
 | `newsletter-archive` | `Newsletter Archive` | — |
+| `transport-tracking` | `Transports`, `Transport Waypoints`, `Transport Checkpoints`, `Transport Admins` — on the **Private Operations Tracker**, not the public hub | At least one Transport Admin email; deploy with sign-in required (see its `SETUP.md` — this one's deployment settings are the opposite of the other eight); never embed on the public Site |
 
 For each one: create the tab with the exact headers from its `SETUP.md`, add at least one real row, then follow that same `SETUP.md`'s "Create the web app" steps (script.google.com project → paste `Code.gs` → add `Index` HTML file → replace `appsscript.json` → run once to authorize → Deploy → New deployment → Web app → test the URL in a logged-out/private browser window → embed in Google Sites via Insert → Embed → URL).
 
-- [ ] Deploy and embed all nine before removing the "coming soon" placeholder from any page that references one.
+- [ ] Deploy and embed the nine public apps before removing the "coming soon" placeholder from any page that references one. Deploy `transport-tracking` separately with its own (different, sign-in-required) settings and share its URL directly — do not embed it.
 - [ ] After any urgent data correction, run that app's `clear*Cache` function from the Apps Script editor rather than waiting out the ~5 minute cache.
 
 ## 6. Calendar, map, donations, wishlists, newsletter

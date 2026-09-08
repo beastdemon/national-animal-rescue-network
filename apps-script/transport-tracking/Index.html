@@ -1,0 +1,809 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base target="_blank">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    /* ============================================================
+       NARN — "The Relay" component theme (final, merged system)
+       Shared drop-in styles for every NARN mini-app embed.
+       Selectors listed in the brand contract are never renamed —
+       new mini-apps may ADD classes but must reuse this exact set.
+       ============================================================ */
+
+    :root {
+      /* ---- brand palette ---- */
+      --primary: #1F3D2E;         /* deep forest ink — headings, dark UI, masthead */
+      --primary-rgb: 31, 61, 46;
+      --primaryDark: #12231A;     /* near-black forest — pressed states, id/count stamps */
+      --primaryDark-rgb: 18, 35, 26;
+      --accent: #C63F17;          /* flare-orange — primary CTA, urgent badge, focus ring */
+      --accent-rgb: 198, 63, 23;
+      --accent-pressed: #8A2C10;  /* struck-shadow shade under the primary button */
+      --accentAlt: #C98A1D;       /* marigold gold — needed/in-progress signal, funding bars */
+      --accentAlt-rgb: 201, 138, 29;
+      --background: #F5EEDF;      /* warm parchment page ground */
+      --surface: #FFFCF5;         /* warm ivory card/panel stock */
+      --ink: #211C15;             /* true warm near-black — reading text, deliberately NOT green */
+      --inkMuted: #5B5445;        /* warm taupe — meta, captions, fine print */
+      --line: #D9C9A0;            /* warm khaki border — reads like cut cardstock, not a UI grey */
+
+      /* ---- structural tokens ---- */
+      --shadow: 0 20px 40px -18px rgba(18, 35, 26, .42), 0 2px 8px rgba(18, 35, 26, .08);
+      --shadow-hover: 0 26px 48px -18px rgba(18, 35, 26, .5), 0 3px 10px rgba(18, 35, 26, .1);
+      --radius: 10px;      /* cards, panels, filter bar, state blocks */
+      --radius-sm: 6px;    /* buttons, inputs, badges, chips, id tags — sharper, "tag" scale */
+    }
+
+    * { box-sizing: border-box; }
+
+    img { max-width: 100%; }
+
+    ::selection { background: var(--accentAlt); color: var(--primaryDark); }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      position: relative;
+      color: var(--ink);
+      background-color: var(--background);
+      background-image: radial-gradient(rgba(33, 28, 21, .045) 1px, transparent 1.5px);
+      background-size: 16px 16px;
+      font-family: 'IBM Plex Sans', 'Segoe UI', Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Masthead stripe — the one graphic device every embedded NARN page shares,
+       so a dozen separate Google Sites mini-apps still read as one product. */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--accent), var(--accentAlt));
+      z-index: 1000;
+    }
+
+    .shell { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: 34px 0 52px; }
+
+    .intro {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 24px;
+      padding-bottom: 18px;
+      border-bottom: 2px dashed var(--line);
+    }
+
+    h1 {
+      position: relative;
+      margin: 0 0 8px;
+      padding-left: 20px;
+      color: var(--primary);
+      font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+      font-weight: 800;
+      font-size: clamp(1.9rem, 4.2vw, 2.9rem);
+      line-height: 1.06;
+      letter-spacing: -0.01em;
+      text-wrap: balance;
+    }
+    h1::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 0.12em; bottom: 0.12em;
+      width: 6px;
+      border-radius: 2px;
+      background: var(--accent);
+    }
+
+    .intro p { margin: 0; max-width: 700px; color: var(--inkMuted); font-size: 1.02rem; }
+
+    .count {
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+      background: var(--primaryDark);
+      color: #fff;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-weight: 600;
+      font-size: .82rem;
+      letter-spacing: .02em;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* ---------- Filters ---------- */
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      padding: 16px;
+      margin-bottom: 26px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    label {
+      display: grid;
+      gap: 5px;
+      font-family: 'IBM Plex Sans', Arial, sans-serif;
+      font-size: .74rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    input, select {
+      width: 100%;
+      min-height: 43px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 9px 11px;
+      color: var(--ink);
+      background: var(--surface);
+      font: inherit;
+    }
+    input::placeholder { color: var(--inkMuted); opacity: .8; }
+    input:focus-visible, select:focus-visible {
+      outline: 3px solid rgba(var(--accent-rgb), .35);
+      outline-offset: 2px;
+      border-color: var(--accent);
+    }
+    a:focus-visible, button:focus-visible, .tab:focus-visible {
+      outline: 3px solid rgba(var(--accent-rgb), .35);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 930px) {
+      .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 620px) {
+      .intro { align-items: flex-start; flex-direction: column; }
+      .filters { grid-template-columns: 1fr; }
+    }
+
+    /* ---------- Card grid ---------- */
+
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+
+    @media (max-width: 930px) {
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 620px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+
+    .photo-wrap { position: relative; aspect-ratio: 4 / 3; background: var(--line); overflow: hidden; }
+    .photo { width: 100%; height: 100%; display: block; object-fit: cover; }
+    .photo-fallback {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+      color: var(--primary);
+      font-size: 3.4rem;
+      background: linear-gradient(160deg, var(--line), var(--background));
+    }
+
+    /* Clipped "luggage tag" corner — the identity's signature shape, tying every
+       status badge back to the relay/manifest metaphor instead of a generic pill. */
+    .badge {
+      position: absolute;
+      top: 12px; left: 12px;
+      padding: 6px 12px 6px 10px;
+      background: var(--primaryDark);
+      color: #fff;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-weight: 600;
+      font-size: .72rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      border-radius: 3px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .25);
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    }
+    .badge.urgent { background: var(--accent); }
+    .badge.needed { background: var(--accentAlt); color: var(--primaryDark); }
+
+    .body { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+
+    .title-row { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+
+    h2 {
+      margin: 0;
+      color: var(--primary);
+      font-family: 'Fraunces', Georgia, serif;
+      font-weight: 700;
+      font-size: 1.42rem;
+      line-height: 1.15;
+    }
+
+    .id {
+      white-space: nowrap;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-size: .72rem;
+      font-weight: 500;
+      color: var(--inkMuted);
+      background: var(--background);
+      border: 1px solid var(--line);
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    .meta { margin: 7px 0 12px; color: var(--inkMuted); font-size: .93rem; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .chip {
+      border-radius: var(--radius-sm);
+      padding: 4px 10px;
+      background: rgba(var(--primary-rgb), .08);
+      border: 1px solid rgba(var(--primary-rgb), .18);
+      color: var(--primary);
+      font-size: .76rem;
+      font-weight: 700;
+      letter-spacing: .01em;
+    }
+
+    .description {
+      display: -webkit-box;
+      overflow: hidden;
+      min-height: 4.5em;
+      margin: 0 0 12px;
+      color: var(--ink);
+      font-size: .95rem;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+
+    .compatibility { margin: 0 0 13px; font-size: .82rem; color: var(--inkMuted); }
+
+    .verified {
+      margin: 0 0 14px;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-size: .72rem;
+      letter-spacing: .02em;
+      color: var(--inkMuted);
+    }
+
+    /* Dashed "tear line" above actions — you tear the stub and go. */
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 2px dashed var(--line);
+    }
+
+    .button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 42px;
+      border-radius: var(--radius-sm);
+      padding: 9px 16px;
+      border: 2px solid transparent;
+      text-decoration: none;
+      font-family: 'IBM Plex Sans', Arial, sans-serif;
+      font-weight: 700;
+      font-size: .94rem;
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease, transform .12s ease, box-shadow .12s ease;
+    }
+
+    /* Primary reads like a stamped, pressable badge rather than a soft app glow. */
+    .button.primary {
+      color: #fff;
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 3px 0 var(--accent-pressed);
+    }
+    .button.primary:hover { transform: translateY(-1px); box-shadow: 0 4px 0 var(--accent-pressed); }
+    .button.primary:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--accent-pressed); }
+
+    .button.secondary { color: var(--primary); background: var(--surface); border-color: var(--primary); }
+    .button.secondary:hover { background: rgba(var(--primary-rgb), .06); }
+    .button.secondary:active { transform: translateY(1px); }
+
+    .state {
+      grid-column: 1 / -1;
+      padding: 40px 20px;
+      text-align: center;
+      background: var(--surface);
+      border: 2px dashed var(--line);
+      border-radius: var(--radius);
+    }
+    .state strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--primary);
+      font-family: 'Fraunces', Georgia, serif;
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+    .state span { color: var(--inkMuted); }
+    .state.error { border-style: solid; border-color: rgba(var(--accent-rgb), .4); }
+    .state.error strong { color: var(--accent-pressed); }
+
+    /* ============================================================
+       Additions for mini-apps beyond the dog directory
+       ============================================================ */
+
+    /* Funding / goal progress */
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: var(--line);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 8px 0 10px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accentAlt));
+      border-radius: inherit;
+      transition: width .3s ease;
+    }
+
+    /* Volunteer role cards */
+    .role-card {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--accentAlt);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+    }
+    .role-card h3 {
+      margin: 0 0 6px;
+      color: var(--primary);
+      font-family: 'Fraunces', Georgia, serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+
+    /* Simple tabbed pages */
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 22px;
+      border-bottom: 2px solid var(--line);
+    }
+    .tab {
+      appearance: none;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      padding: 10px 16px;
+      margin-bottom: -2px;
+      color: var(--inkMuted);
+      font-family: 'IBM Plex Sans', Arial, sans-serif;
+      font-weight: 700;
+      font-size: .92rem;
+      cursor: pointer;
+    }
+    .tab:hover { color: var(--primary); }
+    .tab.active, .tab[aria-selected="true"] { color: var(--primary); border-bottom-color: var(--accent); }
+
+    /* ============================================================
+       Additions specific to transport-tracking
+       ============================================================ */
+
+    /* Signed-in-as / role banner at the top of the page */
+    .role-banner {
+      margin-bottom: 14px;
+      padding: 12px 16px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--accentAlt);
+      border-radius: var(--radius-sm);
+      color: var(--primary);
+      font-weight: 600;
+      font-size: .92rem;
+      box-shadow: var(--shadow);
+    }
+
+    /* Static "use the group text/WhatsApp thread" notice — not a chat feature */
+    .note-line {
+      margin: 0 0 26px;
+      padding: 10px 14px;
+      background: rgba(var(--primary-rgb), .06);
+      border: 1px dashed var(--line);
+      border-radius: var(--radius-sm);
+      color: var(--inkMuted);
+      font-size: .86rem;
+    }
+
+    /* Vertical stack of transport cards (these are wide, detail-dense cards,
+       not a photo-grid, so they get their own layout rather than .grid) */
+    .board { display: flex; flex-direction: column; gap: 22px; }
+
+    .transport-card .body { padding: 20px 22px; }
+    .transport-card .route { color: var(--inkMuted); font-weight: 600; }
+    .transport-card h3 {
+      margin: 20px 0 10px;
+      color: var(--primary);
+      font-family: 'Fraunces', Georgia, serif;
+      font-weight: 700;
+      font-size: 1.02rem;
+    }
+    .transport-card h3:first-of-type { margin-top: 16px; }
+
+    /* Inline (non-photo) badge variant — the base .badge is positioned for a
+       photo-wrap corner; this variant reuses its exact colors/type in flow. */
+    .badge.inline {
+      position: static;
+      display: inline-flex;
+      clip-path: none;
+      box-shadow: none;
+    }
+    .badge.status-in-progress { background: var(--accentAlt); color: var(--primaryDark); }
+    .badge.status-not-started { background: var(--primaryDark); }
+    .badge.status-delayed,
+    .badge.status-issue { background: var(--accent); }
+    .badge.status-completed,
+    .badge.status-arrived,
+    .badge.status-handoff-complete { background: var(--primary); }
+    .badge.status-cancelled,
+    .badge.status-rest-stop { background: var(--inkMuted); }
+    .badge.status-departed,
+    .badge.status-en-route { background: var(--accentAlt); color: var(--primaryDark); }
+
+    .map-wrap {
+      height: 260px;
+      margin: 4px 0 8px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    .map-wrap .leaflet-container { font-family: 'IBM Plex Sans', Arial, sans-serif; background: var(--background); }
+
+    .map-legend { display: flex; flex-wrap: wrap; gap: 14px; margin: 0 0 16px; font-size: .78rem; color: var(--inkMuted); }
+    .map-legend .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+    .map-legend .dot.reached { background: var(--primary); }
+    .map-legend .dot.current { background: var(--accentAlt); }
+    .map-legend .dot.upcoming { background: var(--inkMuted); }
+
+    .timeline { list-style: none; margin: 0 0 6px; padding: 0; display: flex; flex-direction: column; gap: 10px; max-height: 340px; overflow-y: auto; }
+    .timeline-item { padding: 10px 12px; background: var(--background); border: 1px solid var(--line); border-radius: var(--radius-sm); }
+    .timeline-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+    .timeline-time { font-family: 'IBM Plex Mono', 'Courier New', monospace; font-size: .74rem; color: var(--inkMuted); }
+    .timeline-note { margin: 6px 0 4px; font-size: .9rem; color: var(--ink); }
+    .timeline-by { display: block; font-size: .72rem; color: var(--inkMuted); }
+
+    .log-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      align-items: end;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 2px dashed var(--line);
+    }
+    .log-form textarea {
+      width: 100%;
+      min-height: 68px;
+      resize: vertical;
+      font: inherit;
+      padding: 9px 11px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--ink);
+    }
+    .log-form .full-width { grid-column: 1 / -1; }
+    .log-status { align-self: center; font-size: .82rem; color: var(--inkMuted); }
+    .log-status.is-error { color: var(--accent-pressed); font-weight: 700; }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="intro" aria-labelledby="page-title">
+      <div>
+        <h1 id="page-title">Transport tracking</h1>
+        <p>Private, sign-in-only status logging for assigned transports. You only ever see the transports you're actually part of.</p>
+      </div>
+    </section>
+
+    <div id="banner" class="role-banner" role="status" aria-live="polite" hidden>Loading…</div>
+    <p class="note-line">Real-time coordination with drivers happens over the network's existing group text/WhatsApp thread — this page is for status logging only, not messaging.</p>
+
+    <section id="board" class="board" aria-live="polite" aria-busy="true">
+      <div class="state"><strong>Loading your transports…</strong></div>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    'use strict';
+
+    let board = null;
+    const boardEl = document.getElementById('board');
+    const bannerEl = document.getElementById('banner');
+    const MARKER_COLOR = { reached: '#1F3D2E', current: '#C98A1D', upcoming: '#5B5445' };
+    let activeMaps = [];
+
+    loadBoard();
+
+    function loadBoard() {
+      boardEl.setAttribute('aria-busy', 'true');
+      google.script.run
+        .withSuccessHandler(onBoardLoaded)
+        .withFailureHandler(onBoardError)
+        .getTransportBoard();
+    }
+
+    function onBoardLoaded(data) {
+      board = data;
+      boardEl.setAttribute('aria-busy', 'false');
+      renderBanner();
+      renderBoard();
+    }
+
+    function onBoardError(error) {
+      boardEl.setAttribute('aria-busy', 'false');
+      bannerEl.hidden = true;
+      boardEl.replaceChildren(message('The transport board could not be loaded.', error && error.message, true));
+    }
+
+    function renderBanner() {
+      if (!board.signedIn) { bannerEl.hidden = true; return; }
+      bannerEl.hidden = false;
+      const noun = board.count === 1 ? 'transport' : 'transports';
+      const roleLabel = board.isAdmin
+        ? 'Admin view showing ' + board.count + ' ' + noun + '.'
+        : 'Driver view showing ' + board.count + ' ' + noun + '.';
+      bannerEl.textContent = 'Signed in as ' + board.viewerEmail + ' — ' + roleLabel;
+    }
+
+    function renderBoard() {
+      destroyMaps();
+      boardEl.replaceChildren();
+
+      if (!board.signedIn) {
+        boardEl.appendChild(message(
+          'Sign-in required',
+          "Reopen this page while signed in with your Google account. If you're already signed in and still see this, ask an admin to check the web app's deployment settings."
+        ));
+        return;
+      }
+
+      if (!board.transports.length) {
+        boardEl.appendChild(message(
+          "Nothing assigned to you yet",
+          "You'll see a transport here once a coordinator assigns you as a driver, backup contact, or coordinator on one."
+        ));
+        return;
+      }
+
+      const pendingMaps = [];
+      board.transports.forEach(transport => {
+        const built = transportCard(transport);
+        boardEl.appendChild(built.article);
+        if (built.mapEl) pendingMaps.push({ transport: transport, mapEl: built.mapEl });
+      });
+      pendingMaps.forEach(pending => initMap(pending.transport, pending.mapEl));
+    }
+
+    function transportCard(transport) {
+      const article = element('article', 'card transport-card');
+      const body = element('div', 'body');
+
+      const titleRow = element('div', 'title-row');
+      titleRow.appendChild(element('h2', 'route', transport.origin + ' → ' + transport.destination));
+      titleRow.appendChild(element('span', 'id', transport.id));
+      body.appendChild(titleRow);
+
+      const metaBits = ['Driver: ' + (transport.driverName || 'Unassigned')];
+      if (transport.requestingPartner) metaBits.push('Requested by ' + transport.requestingPartner);
+      if (transport.scheduledDate) metaBits.push('Scheduled ' + transport.scheduledDate);
+      body.appendChild(element('p', 'meta', metaBits.join(' · ')));
+
+      body.appendChild(element('span', 'badge inline ' + statusClass(transport.status), transport.status));
+
+      if (transport.notes) {
+        body.appendChild(element('p', 'description', transport.notes));
+      }
+
+      let mapEl = null;
+      if (transport.waypoints.length) {
+        body.appendChild(element('h3', '', 'Route map'));
+        mapEl = element('div', 'map-wrap');
+        body.appendChild(mapEl);
+        body.appendChild(mapLegend());
+      }
+
+      body.appendChild(element('h3', '', 'Checkpoint history'));
+      body.appendChild(timelineList(transport.checkpoints));
+
+      if (transport.canLog) {
+        body.appendChild(logForm(transport));
+      }
+
+      article.appendChild(body);
+      return { article: article, mapEl: mapEl };
+    }
+
+    function mapLegend() {
+      const legend = element('div', 'map-legend');
+      [['reached', 'Reached'], ['current', 'Current leg'], ['upcoming', 'Upcoming']].forEach(pair => {
+        const item = element('span', '');
+        const dot = element('span', 'dot ' + pair[0]);
+        item.appendChild(dot);
+        item.appendChild(document.createTextNode(pair[1]));
+        legend.appendChild(item);
+      });
+      return legend;
+    }
+
+    function timelineList(checkpoints) {
+      if (!checkpoints.length) {
+        return message('No updates logged yet.', 'A checkpoint will appear here once someone logs one.');
+      }
+      const list = element('ol', 'timeline');
+      // Most recent first for reading; the underlying data is chronological.
+      checkpoints.slice().reverse().forEach(checkpoint => {
+        const item = element('li', 'timeline-item');
+        const head = element('div', 'timeline-head');
+        head.appendChild(element('span', 'badge inline ' + statusClass(checkpoint.status), checkpoint.status));
+        head.appendChild(element('span', 'timeline-time', checkpoint.timestamp));
+        item.appendChild(head);
+        if (checkpoint.note) item.appendChild(element('p', 'timeline-note', checkpoint.note));
+        item.appendChild(element('span', 'timeline-by', 'Logged by ' + checkpoint.loggedByEmail));
+        list.appendChild(item);
+      });
+      return list;
+    }
+
+    function logForm(transport) {
+      const form = document.createElement('form');
+      form.className = 'log-form';
+
+      const waypointLabel = element('label', '', 'Waypoint (optional)');
+      const waypointSelect = document.createElement('select');
+      waypointSelect.name = 'waypoint';
+      waypointSelect.appendChild(new Option('No specific waypoint', ''));
+      transport.waypoints.forEach(waypoint => {
+        waypointSelect.appendChild(new Option(waypoint.sequence + ' — ' + waypoint.label, String(waypoint.sequence)));
+      });
+      waypointLabel.appendChild(waypointSelect);
+
+      const statusLabel = element('label', '', 'Status');
+      const statusSelect = document.createElement('select');
+      statusSelect.name = 'status';
+      statusSelect.required = true;
+      (board.checkpointStatuses || []).forEach(status => {
+        statusSelect.appendChild(new Option(status, status));
+      });
+      statusLabel.appendChild(statusSelect);
+
+      const noteLabel = element('label', 'full-width', 'Note (optional)');
+      const noteArea = document.createElement('textarea');
+      noteArea.name = 'note';
+      noteArea.maxLength = 500;
+      noteArea.placeholder = 'Anything a coordinator or the next driver should know.';
+      noteLabel.appendChild(noteArea);
+
+      const submitWrap = element('div', 'full-width');
+      const submitBtn = document.createElement('button');
+      submitBtn.type = 'submit';
+      submitBtn.className = 'button primary';
+      submitBtn.textContent = 'Log an update';
+      submitWrap.appendChild(submitBtn);
+      const statusLine = element('span', 'log-status');
+      submitWrap.appendChild(statusLine);
+
+      form.appendChild(waypointLabel);
+      form.appendChild(statusLabel);
+      form.appendChild(noteLabel);
+      form.appendChild(submitWrap);
+
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        submitBtn.disabled = true;
+        statusLine.className = 'log-status';
+        statusLine.textContent = 'Saving…';
+        google.script.run
+          .withSuccessHandler(updated => {
+            const index = board.transports.findIndex(row => row.id === updated.id);
+            if (index !== -1) board.transports[index] = updated;
+            renderBanner();
+            renderBoard();
+          })
+          .withFailureHandler(error => {
+            submitBtn.disabled = false;
+            statusLine.className = 'log-status is-error';
+            statusLine.textContent = (error && error.message) || 'Could not save that update. Try again.';
+          })
+          .logCheckpoint(transport.id, waypointSelect.value, statusSelect.value, noteArea.value);
+      });
+
+      return form;
+    }
+
+    function initMap(transport, mapEl) {
+      const map = L.map(mapEl, { scrollWheelZoom: false });
+      activeMaps.push(map);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      const latLngs = transport.waypoints.map(waypoint => [waypoint.lat, waypoint.lng]);
+      if (latLngs.length > 1) {
+        L.polyline(latLngs, { color: '#5B5445', weight: 3, opacity: .55, dashArray: '6 8' }).addTo(map);
+      }
+
+      transport.waypoints.forEach(waypoint => {
+        const marker = L.circleMarker([waypoint.lat, waypoint.lng], {
+          radius: 9,
+          color: '#FFFCF5',
+          weight: 2,
+          fillColor: MARKER_COLOR[waypoint.state] || MARKER_COLOR.upcoming,
+          fillOpacity: 1
+        }).addTo(map);
+        const popupEl = document.createElement('div');
+        popupEl.textContent = waypoint.sequence + '. ' + waypoint.label;
+        marker.bindPopup(popupEl);
+      });
+
+      if (latLngs.length === 1) {
+        map.setView(latLngs[0], 11);
+      } else {
+        map.fitBounds(latLngs, { padding: [24, 24] });
+      }
+    }
+
+    function destroyMaps() {
+      activeMaps.forEach(map => map.remove());
+      activeMaps = [];
+    }
+
+    function statusClass(status) {
+      return 'status-' + String(status || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    }
+
+    function element(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined) node.textContent = text;
+      return node;
+    }
+
+    function message(title, detail, isError) {
+      const box = element('div', 'state' + (isError ? ' error' : ''));
+      box.appendChild(element('strong', '', title));
+      if (detail) box.appendChild(element('span', '', detail));
+      return box;
+    }
+  </script>
+</body>
+</html>

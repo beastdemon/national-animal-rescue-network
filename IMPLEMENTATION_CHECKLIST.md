@@ -48,7 +48,16 @@
 - [ ] Replace the placeholder `GENERAL_VOLUNTEER_FORM_URL` in `apps-script/get-involved/Code.gs` with the real, published General Volunteer Application Google Form URL before deploying that app.
 - [ ] Deploy each mini-app as its own Apps Script web app following the folder's `SETUP.md`, test the deployment URL in a logged-out browser, then embed it in Google Sites via Insert → Embed → URL.
 - [ ] After any urgent edit to a tab, run that app's `clear*Cache` function from the Apps Script editor if you don't want to wait out the ~5 minute cache.
-- [ ] Confirm all 9 mini-apps share the same "Relay" brand system (colors, fonts, component styles) documented in `SITE_BUILD_KIT.md` section 2 — they were built and cross-checked together for this, but re-verify after any future edit to one of them.
+- [ ] Confirm all 9 public mini-apps share the same "Relay" brand system (colors, fonts, component styles) documented in `SITE_BUILD_KIT.md` section 2 — they were built and cross-checked together for this, but re-verify after any future edit to one of them.
+
+## Transport tracking (`apps-script/transport-tracking/`) — private, sign-in-gated, separate from the checklist above
+
+- [ ] Create its four tabs (Transports, Transport Waypoints, Transport Checkpoints, Transport Admins) on the **Private Operations Tracker**, not the public hub. Exact headers are in its `SETUP.md`.
+- [ ] Add at least one real email to `Transport Admins` before relying on this tool.
+- [ ] Deploy with **Execute as: User accessing the web app** and **Who has access: Anyone with a Google account** — never "Anyone, even anonymous." This is the opposite of how the other 9 apps are deployed; double-check it.
+- [ ] Verify every `Assigned Driver Email` / `Backup Contact Email` / `Coordinator Email` is a real Google account email, entered exactly as that person signs in.
+- [ ] Test cross-user isolation before trusting it: open the deployment URL as a Transport Admin and confirm you see everything; open it in a separate signed-in session as one specific assigned driver and confirm they see only their own transport(s) — including checking the raw `google.script.run` response in browser devtools, not just what renders.
+- [ ] Do not embed this page on the public Google Site or link to it from public nav. Share the deployment URL directly with drivers/coordinators.
 
 ## Maps, calendar, and meetings
 

@@ -48,6 +48,7 @@ Keep the top navigation task-based. Make **Give** the final and visually distinc
    - Volunteer to Transport
    - Transport Coverage Map
    - Aviation & International Partnerships
+   - *(Not in this nav: Transport Tracking. It's a private, sign-in-gated tool for assigned drivers/coordinators only — `apps-script/transport-tracking/` — shared directly by URL, never linked from or embedded on the public Site.)*
 4. Shelter & Rescue Partners
    - Partner Directory & Availability
    - Become a Partner
@@ -343,4 +344,5 @@ No outside submission should publish automatically.
 - Custom domain and Analytics property, if available
 - The real, published General Volunteer Application Google Form URL — `apps-script/get-involved/Code.gs` ships with a placeholder (`GENERAL_VOLUNTEER_FORM_URL`) that must be replaced before that page goes live
 - Nine new sheet tabs need to be created in the Public Website Content Hub before the corresponding mini-app can go live: Foster Openings, Partner Directory, Volunteer Needs (optional), State Representatives, Current Needs, Resources, Give Funds, Wishlists, Future Projects, and Newsletter Archive — exact column headers for each are in that mini-app's `SETUP.md`
+- Four more new tabs need to be created on the **Private Operations Tracker** (not the public hub) for `transport-tracking`: Transports, Transport Waypoints, Transport Checkpoints, Transport Admins — see `apps-script/transport-tracking/SETUP.md`. At least one Transport Admin email (a coordinator or board member) needs to be decided before that tool is useful.
 

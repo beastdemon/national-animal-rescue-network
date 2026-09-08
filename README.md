@@ -18,6 +18,7 @@ This folder contains the first working foundation for a Google Sites website and
   - `resources-directory/` — filterable resource list by audience.
   - `give-hub/` — fund designations, Amazon wishlists, and future-project funding progress in one tabbed page.
   - `newsletter-archive/` — reverse-chronological newsletter issue archive.
+  - `transport-tracking/` — **different from the other eight**: private, sign-in-gated, and read+write. Reads/writes the Private Operations Tracker (not the public hub), shows each signed-in driver/coordinator only their own assigned transports (admins see all), and lets them log checkpoint statuses against coordinator-defined waypoints on a free Leaflet/OpenStreetMap map. No messaging feature — pairs with the network's existing group text/WhatsApp thread rather than replacing it. Never embed this one on the public Site; share its deployment URL directly with drivers/coordinators.
 
 ## Google Drive assets
 
