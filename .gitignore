@@ -9,3 +9,8 @@ desktop.ini
 # Local tool state — not part of the project
 .playwright-mcp/
 .kiro/
+
+# Raw/intermediate image sources and one-off processing scripts — the
+# finished favicon and logo live in assets/narn-favicon.png and
+# assets/narn-logo.png; nothing in here is needed to build the site
+assets/generated/

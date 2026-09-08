@@ -15,9 +15,9 @@ Doing this first means every page you build after inherits the brand automatical
 
 1. Open the site, click **Themes** in the right sidebar.
 2. Under **Custom**, click **Create theme** (the `+` tile).
-3. **Page 1 — Name & images:** name it "Relay". Skip the logo/banner for now (add the real logo later once you have one; the banner image gets set per-page anyway). Click **Next**.
+3. **Page 1 — Name & images:** name it "Relay". Skip the logo/banner here — add the real logo in Step 1a below instead, since the theme wizard's logo slot is easy to fumble and isn't needed to get colors/fonts applied. Click **Next**.
 4. **Page 2 — Colors:** click the **Custom colors** tab (not Preset colors). You'll see 3 color swatches with hex fields. Set them to:
-   - `#1F3D2E` (deep forest — primary/dark role)
+   - `#0B3358` (deep navy — primary/dark role)
    - `#F5EEDF` (warm parchment — background role)
    - `#C63F17` (flare-orange — accent role)
 
@@ -26,6 +26,14 @@ Doing this first means every page you build after inherits the brand automatical
    *Note: the full "Relay" palette has 9 tokens (see `SITE_BUILD_KIT.md` section 2) but Sites' theme system only takes 3. These three are the ones that matter site-wide — the finer distinctions (surface vs. background, the marigold accentAlt, etc.) already live inside the 10 Apps Script embeds' own CSS and aren't affected by this setting.*
 5. **Page 3 — Fonts:** click the **Titles and headings** font field → **More fonts** → search **Fraunces** → check it → **Done** → select it. Repeat for **Body text**, searching **IBM Plex Sans**.
 6. Click **Create theme**. It applies immediately, site-wide.
+
+## Step 1a — Apply the logo and favicon (2 min)
+
+Both files are ready: `assets/narn-logo.png` (icon + full "National Animal Rescue Network" wordmark) and `assets/narn-favicon.png` (icon only, square, transparent background).
+
+1. **Logo:** hover the site name in the top-left of the page (next to the nav), where the editor shows a small **Edit logo** control. Click it, upload `assets/narn-logo.png`. Sites fits it into the header at a small size — this is normal, the source file is high-res so it stays sharp.
+2. **Favicon:** click **Settings** (gear icon, main toolbar) → the site icon/favicon upload square is on the **General** tab. Upload `assets/narn-favicon.png` there. This is the small icon shown in the browser tab, not the same slot as the logo.
+3. Save/close Settings. Both changes apply site-wide immediately, same as the theme.
 
 ## Step 2 — Fix the page order (2 min)
 
@@ -46,11 +54,28 @@ Then drag **Contact** to sit *inside* **About** as a sub-page (drop it slightly 
 
 Every page — Home and the 6 new ones — currently has the same leftover consulting-template junk. Do this same cleanup on each one before adding real content:
 
-1. Open the page. Click the header image → **Image** → upload a real photo (use `assets/narn-homepage-hero.png` on Home; for other pages, any approved dog/volunteer photo, or leave the current stock photo for now and swap later — don't let missing photos block getting the copy in).
+1. Open the page. Click the header image → **Image** → upload a real photo (use `assets/narn-homepage-hero.png` on Home; for other pages, see the shot list in Step 3a below, or leave the current stock photo for now and swap later — don't let missing photos block getting the copy in).
 2. Click the header title text, replace "[Page Name]" with the real page title from the nav list above.
 3. Scroll down. You'll find a stray teal band reading **"Call or email to book an appointment: 555-555-5555 or [ email address ]"** — this is generic template filler, not shared/site-wide (each page got its own copy). Click it, click the trash/delete icon on its section toolbar (top-right of that section when hovered) to remove the whole section. Do this on every page.
 4. If the page also has a leftover image carousel or an extra "National Animal Rescue Network" heading-over-photo section (mainly on Home), delete those sections the same way — hover the section, click **Delete section** in its toolbar.
 5. Now the page is a clean slate: just the header. Add content using **Insert → Text box** for paragraphs, and **Insert → Content blocks** (the small preview tiles under Insert) for multi-column layouts like comparison cards or role grids.
+
+## Step 3a — Photo shot list (real/stock, not AI)
+
+Every header photo on the site should be a real photograph — either the network's own (once you have consented photos of actual dogs/volunteers) or licensed stock in the meantime. Free stock libraries (Unsplash, Pexels, Pixabay) all allow commercial nonprofit use without attribution; just avoid anything showing a recognizable branded shelter, visible license plate, or identifiable minor. Search terms below are starting points, not exact titles.
+
+| Page | Subject & mood | Framing | Search terms |
+|---|---|---|---|
+| Home | Done — `assets/narn-homepage-hero.png` (volunteers with a group of shelter dogs, golden hour) | — | — |
+| Adopt & Foster | A person on the floor or couch with one dog, warm domestic light — sells "this dog in a home," not "this dog in a kennel" | Wide banner, dog + one person, indoor or backyard | "foster dog home", "adopting shelter dog living room" |
+| Transport | A dog being loaded into a car/van, or riding calmly in a crate in the back seat — conveys the journey, not distress | Wide banner, vehicle + crate/dog, daylight | "dog transport rescue van", "rescue dog car ride crate" |
+| Shelter & Rescue Partners | A row of kennels or a volunteer working alongside shelter staff — grounds the "overlooked shelters" mission without looking bleak | Wide banner, human + shelter environment, not empty cages alone | "animal shelter volunteer kennel", "shelter staff dog walk" |
+| Get Involved | A small group of different volunteers doing different tasks (one with a camera, one with a leash, one with a clipboard) — signals many roles, not just dog-walking | Wide banner, 2-3 people, varied activity | "animal rescue volunteers group", "shelter volunteer team" |
+| News & Resources | Someone reading on a phone/tablet outdoors, or a community info table — informational, lower-key than the mission pages | Wide banner, calmer/neutral tone | "reading newsletter outdoors", "community info table" |
+| About | A calm, editorial shot of a rescued dog resting or a hand gently on a dog — mission/values tone, not action | Wide banner, close/medium shot, soft light | "rescue dog resting calm", "hand petting rescue dog" |
+| Give | A dog at a vet visit, or hands packing a supply box — shows where donations go | Wide banner, care/supplies focused | "shelter dog vet visit", "packing pet supply donation box" |
+
+Google Sites header images crop to a wide banner automatically — pick landscape-orientation photos with the main subject centered or right-of-center (the site title text sits on the left).
 
 ## Step 4 — Page-by-page content
 

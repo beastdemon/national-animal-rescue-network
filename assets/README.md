@@ -24,3 +24,9 @@ Color palette: warm cream, muted teal accents, natural green, soft rust and gold
 
 Constraints: no text, no logos, no branded clothing, no cages dominating the scene, no sadness or distress, no visible injuries, no exaggerated smiles, no watermark. Avoid duplicated animals, malformed paws, extra limbs, uncanny faces, or overly glossy stock-photo styling.
 
+# Logo and favicon
+
+`narn-logo.png` (icon + full "National Animal Rescue Network" wordmark) and `narn-favicon.png` (icon only, square) both come from a single AI-generated line-art mark — a dog and cat silhouette forming an infinity loop inside a heart. The mark was cropped, then recolored to flat navy (`#0B3358`, the network's primary brand color) with the paper background keyed fully transparent, so it drops cleanly onto any page background. See `SITE_ASSEMBLY_GUIDE.md` Step 1a for where each file gets uploaded in Google Sites.
+
+Per-page header photos are real/stock photography, not AI-generated — see the shot list in `SITE_ASSEMBLY_GUIDE.md` Step 3a.
+

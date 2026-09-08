@@ -10,14 +10,14 @@ Google Sites should present approved public information. Applications, exact rou
 
 ## 2. Recommended brand direction — "The Relay"
 
-The organization's own read on the first pass (deep teal / warm rust / cream / sage / Lato) was that it felt like a generic, forgettable nonprofit template. The replacement direction keeps the same warm, natural family — so it still sits comfortably against the existing hero photo — but commits to one real idea instead of a default palette: NARN isn't a single shelter's story, it's a relay of specific handoffs (foster, driver, pilot, evaluator, state rep, donor), and the whole visual system is built to say that in the details, not just the headline.
+The organization's own read on the first pass (deep teal / warm rust / cream / sage / Lato) was that it felt like a generic, forgettable nonprofit template. The replacement direction commits to one real idea instead of a default palette: NARN isn't a single shelter's story, it's a relay of specific handoffs (foster, driver, pilot, evaluator, state rep, donor), and the whole visual system is built to say that in the details, not just the headline. The primary color is deep navy, taken directly from the network's own logo mark (a dog-and-cat heart line drawing) rather than picked in isolation — it anchors a warm parchment/ivory background and flare-orange/marigold accents, so the palette still reads warm and human even though the anchor color is cool.
 
-- Primary (headings, dark UI): deep forest ink `#1F3D2E`, pressed/darkest shade `#12231A`
+- Primary (headings, dark UI): deep navy ink `#0B3358`, pressed/darkest shade `#05203A`
 - Action/accent (primary buttons, urgent badges, focus rings): flare-orange `#C63F17`
 - Secondary accent (in-progress/needed signal, funding-bar highlight): marigold gold `#C98A1D`
 - Background: warm parchment `#F5EEDF`
 - Surface (cards/panels): warm ivory `#FFFCF5`
-- Text: warm near-black `#211C15` (deliberately not the same hue as the primary green, so brand color and reading text don't collapse into one note)
+- Text: warm near-black `#211C15` (deliberately not the same hue as the primary navy, so brand color and reading text don't collapse into one note)
 - Muted text/meta: warm taupe `#5B5445`
 - Borders: warm khaki `#D9C9A0`
 - Headings: Fraunces (serif, distinctive, confident). Body/UI text: IBM Plex Sans. IDs, status stamps, "last verified" lines: IBM Plex Mono — this is what makes the manifest/logistics idea legible in the small details, not just the big headline.
@@ -25,7 +25,7 @@ The organization's own read on the first pass (deep teal / warm rust / cream / s
 - Voice: confident, plain-spoken, specific — name the actual action and role ("drive a leg," "evaluate an intake," "cover the vet bill") instead of reaching for "join us in our mission" or "every animal deserves." Never imply tax-deductibility or a guaranteed placement outcome.
 - Photos: real or permission-cleared rescue work, natural light, people handling animals safely, varied dogs and volunteers, no graphic medical imagery on general pages.
 
-Homepage hero asset: `assets/narn-homepage-hero.png` — its warm cream/teal/rust/green tones were the reason this palette stayed in the same warm family rather than jumping to something that would clash against it. Place a dark transparent overlay only if needed for text contrast. Keep the headline in the left-side negative space.
+Homepage hero asset: `assets/narn-homepage-hero.png` — its warm cream/rust/green tones sit comfortably behind navy headline text without a heavy overlay; place a dark transparent overlay only if needed for contrast. Keep the headline in the left-side negative space.
 
 New hero copy in this voice: **Headline:** "Rescue is a relay. Run a leg." **Supporting line:** "Foster for a weekend. Drive or fly a transport leg. Evaluate a new intake. Cover the vet bill that's holding someone up. Tell us where you fit — we'll put you to work this week, not someday." **Primary button:** "Pick your leg of the relay." **Secondary button:** "Meet dogs waiting for a home."
 
@@ -341,7 +341,7 @@ No outside submission should publish automatically.
 ## 8. Launch-blocking owner inputs
 
 - Legal organization name, nonprofit/EIN representation, mission, service area, and official contact details
-- Logo or permission to create one; confirmed color/font preferences
+- ~~Logo or permission to create one; confirmed color/font preferences~~ — done: `assets/narn-logo.png` and `assets/narn-favicon.png`, navy/parchment/flare-orange palette, Fraunces/IBM Plex Sans (see `SITE_ASSEMBLY_GUIDE.md` Step 1/1a)
 - Organization-owned Google Workspace account and at least two accountable site owners
 - Adoption, foster, evaluation, partner, transport, volunteer, privacy, retention, and safety policies
 - Donation processor, fund terms, receipt language, and approved Amazon wishlists

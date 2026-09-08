@@ -9,6 +9,7 @@ This folder contains the first working foundation for a Google Sites website and
 - `FORM_BLUEPRINTS.md` — exact purpose, fields, branching, access, and confirmation copy for the recommended Google Forms.
 - `IMPLEMENTATION_CHECKLIST.md` — a practical build and launch checklist for Google Sites, Forms, Sheets, Calendar, Maps, donations, and newsletter delivery.
 - `assets/narn-homepage-hero.png` — an original wide hero image generated for the homepage.
+- `assets/narn-logo.png` / `assets/narn-favicon.png` — the network's logo (icon + full wordmark) and square favicon, navy on transparent. See `SITE_ASSEMBLY_GUIDE.md` Step 1a for exactly where each one gets uploaded in Sites.
 - `apps-script/` — nine working, embeddable Google Apps Script mini-apps, all sharing one design system so they read as one product inside Google Sites. Each reads its own approved tab of the Public Website Content Hub; none ever read the Private Operations Tracker or raw unreviewed submissions. See each folder's `SETUP.md` for the exact sheet tab and columns it needs, and the deployment/embed steps.
   - `dog-directory/` — filterable directory of approved dogs.
   - `foster-openings/` — filterable board of open foster needs.
