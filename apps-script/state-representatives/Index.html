@@ -335,10 +335,23 @@
     .state.error strong { color: var(--accent-pressed); }
 
     /* ============================================================
-       Additions for this mini-app: a roster of state cards with no
-       photo. The badge reuses the "luggage tag" clip-path but sits
-       inline in the title row instead of pinned over a photo.
+       Additions for this mini-app: filled-seat cards show a consented
+       photo (or a fallback) the same way the dog directory does; open
+       seats stay photo-less and compact. The badge reuses the
+       "luggage tag" clip-path but sits inline in the title row
+       instead of pinned over a photo.
        ============================================================ */
+    .photo-wrap { position: relative; aspect-ratio: 4 / 3; background: var(--line); overflow: hidden; }
+    .photo { width: 100%; height: 100%; display: block; object-fit: cover; }
+    .photo-fallback {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+      color: var(--primary);
+      font-size: 3.4rem;
+      background: linear-gradient(160deg, var(--line), var(--background));
+    }
     .roster-card .body { padding-top: 16px; }
     .badge.inline {
       position: static;
@@ -368,8 +381,8 @@
   <main class="shell">
     <section class="intro" aria-labelledby="roster-title">
       <div>
-        <h1 id="roster-title">State representatives</h1>
-        <p>One rep per state keeps intake, transport, and local partnerships moving without a bottleneck at HQ. Find your state below — open seats list an apply link, filled ones list how to reach the rep.</p>
+        <h1 id="roster-title">Board of State Representatives</h1>
+        <p>One representative per state speaks for the network and the dogs in our care to their own state's government — building relationships with legislators and showing up for the policy decisions that affect shelters and rescues. Meet who's serving below, or apply for an open state.</p>
       </div>
       <div id="count" class="count" aria-live="polite">Loading…</div>
     </section>
@@ -427,6 +440,24 @@
     function card(row) {
       const needed = row.status !== 'Filled';
       const article = element('article', 'card roster-card');
+
+      if (!needed) {
+        const photoWrap = element('div', 'photo-wrap');
+        if (isHttps(row.photoUrl)) {
+          const image = document.createElement('img');
+          image.className = 'photo';
+          image.src = row.photoUrl;
+          image.alt = row.repName ? row.repName + ', representative for ' + row.state : row.state + ' representative';
+          image.loading = 'lazy';
+          image.referrerPolicy = 'no-referrer';
+          image.addEventListener('error', () => image.replaceWith(fallback()));
+          photoWrap.appendChild(image);
+        } else {
+          photoWrap.appendChild(fallback());
+        }
+        article.appendChild(photoWrap);
+      }
+
       const body = element('div', 'body');
 
       const titleRow = element('div', 'title-row');
@@ -435,7 +466,7 @@
       body.appendChild(titleRow);
 
       if (needed) {
-        body.appendChild(element('p', 'open-note', 'This state doesn’t have a representative yet. Apply to run intake, fosters, and local partnerships here.'));
+        body.appendChild(element('p', 'open-note', 'This state doesn’t have a representative yet. Apply to advocate for the network and its dogs here.'));
         const actions = element('div', 'actions');
         if (isHttps(row.applyUrl)) {
           actions.appendChild(link('Apply to represent your state', row.applyUrl, 'primary'));
@@ -445,11 +476,16 @@
         if (actions.childNodes.length) body.appendChild(actions);
       } else {
         if (row.repName) body.appendChild(element('p', 'rep-name', row.repName));
+        if (row.bio) body.appendChild(element('p', 'description', row.bio));
         body.appendChild(contactLine(row.contact));
       }
 
       article.appendChild(body);
       return article;
+    }
+
+    function fallback() {
+      return element('div', 'photo-fallback', '🎗️');
     }
 
     function contactLine(contact) {

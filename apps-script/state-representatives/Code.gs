@@ -14,7 +14,7 @@ const CONFIG = Object.freeze({
 
 function doGet() {
   return HtmlService.createHtmlOutputFromFile('Index')
-    .setTitle('State Representatives — The National Animal Rescue Network')
+    .setTitle('Board of State Representatives — The National Animal Rescue Network')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
@@ -37,7 +37,7 @@ function getStateRepData() {
 
   const required = [
     'State', 'Representative Name', 'Organization Or Alias Contact',
-    'Status', 'Apply URL'
+    'Status', 'Apply URL', 'Photo URL', 'Bio Or Message'
   ];
   const missing = required.filter(header => column[header] === undefined);
   if (missing.length) {
@@ -57,7 +57,9 @@ function getStateRepData() {
         repName: clean_(row[column['Representative Name']]),
         contact: safeContact_(row[column['Organization Or Alias Contact']]),
         status: filled ? 'Filled' : 'Representative Needed',
-        applyUrl: publicHttpUrl_(row[column['Apply URL']])
+        applyUrl: publicHttpUrl_(row[column['Apply URL']]),
+        photoUrl: publicHttpUrl_(row[column['Photo URL']]),
+        bio: clean_(row[column['Bio Or Message']])
       };
     })
     .sort((a, b) => a.state.localeCompare(b.state));

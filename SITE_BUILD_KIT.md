@@ -265,9 +265,16 @@ Organize by audience rather than one long list:
 
 Every resource needs a title, audience, scope/state, short description, URL, and last-reviewed date.
 
-### State Representatives
+### Board of State Representatives
 
-Representatives connect approved local organizations and volunteers, verify public information, elevate needs, and help coordinate state-level outreach. Publish organization-controlled aliases such as `texas@yourdomain.org`, not private addresses. Display “Representative needed” for open states with an Apply action.
+One representative per state speaks for the network and the dogs in its care to their own state's government — building relationships with state legislators, showing up when animal-welfare bills or shelter/rescue regulation come up, and keeping the network's needs visible at the state level. This is a network volunteer role, not an elected office — do not confuse it with an actual state senator or state representative in the page copy or the application; the distinction matters to avoid misleading anyone about who these people are.
+
+**Note for the board:** organized legislative advocacy by a 501(c)(3) has real IRS limits on lobbying activity. Keep public copy and the application framed as relationship-building and policy advocacy, not a formal lobbying operation, until legal counsel has reviewed what the network's reps can and can't do under the org's eventual tax-exempt status.
+
+Page structure:
+- **Meet our representatives** — a card per state showing (with the rep's consent) a photo, name, short bio/message about why they serve, and a public-safe contact (an organization alias like `texas@yourdomain.org` or a public link — never a personal phone number or address).
+- **Open seats** — states without a rep show "Representative needed" and an apply link, same as today.
+- **Apply** — links to the dedicated State Representative / Board Application (see `FORM_BLUEPRINTS.md`), not the general volunteer form.
 
 ### Board & Meetings
 

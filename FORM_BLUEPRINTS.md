@@ -48,7 +48,7 @@ Role branches:
 - **Photography:** camera/equipment, portfolio URL, editing experience, service radius, availability, rights/release acknowledgment.
 - **Advocacy:** topics, state/district, speaking/writing/social skills, non-harassment and accuracy pledge.
 - **Events:** event experience, lifting/setup ability, fundraising/cash-handling interest, schedule.
-- **State representative:** state, professional/community background, organization relationships, weekly capacity, conflict disclosure, organization-email requirement.
+- **State representative:** do not collect this inline. Point applicants to the dedicated State Representative / Board Application (form 13 below) instead — this is a board-level advocacy role, not a checkbox on the general form.
 - **Administrative/general:** skills, software, scheduling, data entry, outreach, grant research.
 
 ## 4. Dog Evaluator Application
@@ -120,4 +120,22 @@ Audience: public. Branch by topic.
 Fields: name; email; state; topic—general, media, local news/story, resource suggestion, website correction, urgent listing update, other; organization; subject; message; source URL; permission to contact; permission to publish story content (separate, optional); attachment only if policies support it.
 
 Display a notice if the organization is not a 24/7 emergency service. Provide appropriate crisis resources instead of implying immediate response.
+
+## 13. State Representative / Board Application
+
+Audience: public. File upload: no.
+
+This is a board-level advocacy role, not a local-coordinator checkbox — one person per state who builds relationships with their state's legislators and shows up for animal-welfare and shelter/rescue policy on the network's behalf. It is deliberately a separate, fuller application from the General Volunteer Application, the same way the Dog Evaluator Application is separate from it.
+
+Sections and fields:
+
+1. **Contact and state** — legal name; email; phone; city; which state they'd represent; age confirmation; preferred contact method.
+2. **Why this role** — why they want to advocate for the network and the dogs in their state; any existing relationships with state legislators, agencies, or animal-welfare coalitions; relevant legislative, policy, or community-organizing experience.
+3. **Capacity** — weekly/monthly time available; willingness to travel to the state capitol; willingness to speak publicly or testify if asked; comfort representing the organization's positions rather than personal opinions.
+4. **Commitment and conduct** — acknowledgment that this role advocates on animal-welfare policy, not on behalf of any candidate, party, or ballot measure; conflict-of-interest disclosure (e.g. current employment or lobbying work on related issues); separate, optional consent to a public photo and short bio on the site; acknowledgment that an organization email address is required once appointed; term acknowledgment (e.g. renewable annually; the network can end the arrangement at any time).
+5. **Eligibility and consent** — accuracy certification; privacy consent; typed acknowledgment.
+
+Confirmation: "Thank you for applying to represent The National Animal Rescue Network and the dogs in your state. This application has been received for review. Submission does not guarantee appointment. If your state's seat is open and your background is a fit, a coordinator or board member will follow up through the information provided."
+
+Do not publish an applicant's name, photo, or bio anywhere until they are actually appointed and have separately consented to publication — the "public photo and bio" checkbox on this form covers appointment-time publication, not this application itself.
 
