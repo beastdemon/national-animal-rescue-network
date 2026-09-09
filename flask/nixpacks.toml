@@ -1,0 +1,5 @@
+[phases.install]
+cmds = ["pip install -r requirements.txt"]
+
+[start]
+cmd = "waitress-serve --port=$PORT --call 'app:create_app'"
