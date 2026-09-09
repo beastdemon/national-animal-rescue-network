@@ -72,12 +72,16 @@ class Config:
     # ---- Social media links (empty until Amber provides them) ----
     # Set these via env vars when the accounts exist; the footer icons only
     # appear for links that are set.
+    # Generic platform URLs as defaults so the footer icons are visible now.
+    # Amber replaces each with the real profile URL via env vars when ready.
+    # `or default` so an empty env var (e.g. SOCIAL_FACEBOOK= in .env) still
+    # falls back to the generic platform URL rather than rendering blank.
     SOCIAL = {
-        'facebook':  os.environ.get('SOCIAL_FACEBOOK', ''),
-        'instagram': os.environ.get('SOCIAL_INSTAGRAM', ''),
-        'tiktok':    os.environ.get('SOCIAL_TIKTOK', ''),
-        'youtube':   os.environ.get('SOCIAL_YOUTUBE', ''),
-        'x':         os.environ.get('SOCIAL_X', ''),
+        'facebook':  os.environ.get('SOCIAL_FACEBOOK')  or 'https://www.facebook.com/',
+        'instagram': os.environ.get('SOCIAL_INSTAGRAM') or 'https://www.instagram.com/',
+        'tiktok':    os.environ.get('SOCIAL_TIKTOK')    or 'https://www.tiktok.com/',
+        'youtube':   os.environ.get('SOCIAL_YOUTUBE')   or 'https://www.youtube.com/',
+        'x':         os.environ.get('SOCIAL_X')         or 'https://x.com/',
     }
 
     # ---- Shelter dog submission sync ----
