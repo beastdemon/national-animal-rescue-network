@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}About — National Animal Rescue Network{% endblock %}
+{% block meta_description %}Learn about the National Animal Rescue Network's mission, our state champions, and how we work with overlooked shelters across the country.{% endblock %}
+
+{% block extra_head %}
+<style>[data-hidden]{display:none!important}</style>
+{% endblock %}
+
+{% block content %}
+<div class="shell">
+  <div class="intro">
+    <div>
+      <h1 class="page-title">About the network</h1>
+      <p>We are a coordination layer for animal rescue — not a shelter, not an adoption agency. We connect the dogs, people, and organizations already doing the work.</p>
+    </div>
+  </div>
+
+  <div class="mission-block">
+    <h2>What we do</h2>
+    <p>The National Animal Rescue Network partners with shelters and animal control centers in underserved areas — facilities that are overcrowded, underfunded, or simply overlooked by the mainstream rescue community. We match dogs from those facilities with vetted foster homes, coordinate multi-leg transport routes to move them there, and connect them with adopters once they're ready.</p>
+    <p>We don't run the shelters. We don't evaluate every dog ourselves. We build the coordination infrastructure that makes the relay possible: the partner network, the transport logistics, the foster and adoption matching, and the public visibility that gets dogs looked at twice.</p>
+  </div>
+
+  <div class="mission-block" style="margin-top:20px">
+    <h2>How we're structured</h2>
+    <p>The network is run by a core team and a group of state-level champions — one per state — who coordinate local fosters, transporters, and partner relationships in their area. Champions are network-appointed advocates, distinct from any elected office. Each state champion is responsible for knowing what's happening on the ground in their state and connecting local resources to the national relay.</p>
+    <p>Open champion seats are listed below. If your state doesn't have a champion yet and you're interested in the role, use the apply link on that state's card.</p>
+  </div>
+
+  <!-- State Champions -->
+  <h2 class="section-title">State Champions</h2>
+  {% if champions_data.get('error') %}
+  <div class="state error" role="alert">
+    <strong>State champions could not be loaded.</strong><span>{{ champions_data.error }}</span>
+  </div>
+  {% elif not champions_data.states %}
+  <div class="state"><strong>No state champions listed yet.</strong><span>Check back soon.</span></div>
+  {% else %}
+  <div class="filters" role="search" aria-label="Filter state champions" style="margin-bottom:22px">
+    <label>Search state
+      <input id="champ-search" type="search" autocomplete="off" placeholder="State name…">
+    </label>
+  </div>
+  <div class="grid" id="champ-grid" aria-live="polite">
+    {% for s in champions_data.states %}
+    <article class="card champion-card" data-state="{{ s.state | lower }}">
+      {% if s.status == 'Filled' %}
+      <div class="photo-wrap">
+        {% if s.photoUrl %}
+          <img class="photo" src="{{ s.photoUrl }}" alt="{{ s.championName }}, state champion for {{ s.state }}"
+               loading="lazy" referrerpolicy="no-referrer"
+               onerror="this.style.display='none';this.nextElementSibling.hidden=false">
+          <div class="photo-fallback" hidden aria-hidden="true">🎗️</div>
+        {% else %}
+          <div class="photo-fallback" aria-hidden="true">🎗️</div>
+        {% endif %}
+        <span class="badge needed">Filled</span>
+      </div>
+      {% endif %}
+      <div class="body">
+        <div class="title-row">
+          <h2 style="font-size:1.2rem">{{ s.state }}</h2>
+          {% if s.status != 'Filled' %}
+            <span class="badge inline urgent" style="position:static;clip-path:none;box-shadow:none">Open seat</span>
+          {% endif %}
+        </div>
+        {% if s.status == 'Filled' %}
+          <p style="margin:6px 0 4px;font-weight:700;color:var(--primary)">{{ s.championName }}</p>
+          {% if s.contact %}
+            <p class="meta">
+              {% if '@' in s.contact %}
+                <a href="mailto:{{ s.contact }}">{{ s.contact }}</a>
+              {% elif s.contact.startswith('https://') %}
+                <a href="{{ s.contact }}" target="_blank" rel="noopener noreferrer">{{ s.contact }}</a>
+              {% else %}
+                {{ s.contact }}
+              {% endif %}
+            </p>
+          {% endif %}
+          {% if s.bio %}<p class="description">{{ s.bio }}</p>{% endif %}
+        {% else %}
+          <p class="meta">No champion appointed yet for {{ s.state }}.</p>
+          {% if s.applyUrl %}
+          <div class="actions">
+            <a href="{{ s.applyUrl }}" class="button primary" target="_blank" rel="noopener noreferrer">Apply to be champion</a>
+          </div>
+          {% endif %}
+        {% endif %}
+
+        <!-- Congressional delegation (optional) -->
+        {% if s.delegation %}
+        <details>
+          <summary>Federal delegation for {{ s.state }}</summary>
+          <ul class="delegation-list">
+            {% for d in s.delegation %}
+            <li>
+              {{ d.chamber }}{% if d.district %} — District {{ d.district }}{% endif %}:
+              {% if d.contactUrl %}
+                <a href="{{ d.contactUrl }}" target="_blank" rel="noopener noreferrer">{{ d.name }}</a>
+              {% else %}
+                {{ d.name }}
+              {% endif %}
+            </li>
+            {% endfor %}
+          </ul>
+        </details>
+        {% endif %}
+      </div>
+    </article>
+    {% endfor %}
+    <div class="state" id="champ-no-results" hidden>
+      <strong>No states match.</strong><span>Try a different search term.</span>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="mission-block" style="margin-top:36px">
+    <h2>State legislature directories</h2>
+    <p>We list each state's US Senators and House Representatives above. For state-level legislators (state senate and state house), see the <a href="https://www.congress.gov/state-legislature-websites" target="_blank" rel="noopener noreferrer">Congress.gov index of state legislature websites</a> — there are too many state districts to hand-maintain here.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  var searchEl = document.getElementById('champ-search');
+  var grid     = document.getElementById('champ-grid');
+  var noRes    = document.getElementById('champ-no-results');
+  if (!searchEl || !grid) return;
+  searchEl.addEventListener('input', function () {
+    var q     = searchEl.value.trim().toLowerCase();
+    var cards = grid.querySelectorAll('article.card');
+    var vis   = 0;
+    cards.forEach(function (card) {
+      var show = !q || card.dataset.state.includes(q);
+      if (show) { card.removeAttribute('data-hidden'); vis++; }
+      else      { card.setAttribute('data-hidden', ''); }
+    });
+    if (noRes) noRes.hidden = vis > 0;
+  });
+})();
+</script>
+{% endblock %}

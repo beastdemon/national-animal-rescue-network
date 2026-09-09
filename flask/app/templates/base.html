@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}The National Animal Rescue Network{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}The National Animal Rescue Network connects rescue dogs with fosters, adopters, transporters, and partners across the country.{% endblock %}">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/narn-favicon.png') }}">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+  <!-- Relay design system -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/relay.css') }}">
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- ===================== NAVIGATION ===================== -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a class="nav-logo" href="{{ url_for('main.index') }}" aria-label="National Animal Rescue Network home">
+        <img src="{{ url_for('static', filename='images/narn-logo.png') }}" alt="NARN logo" height="32">
+        <span>National Animal<br>Rescue Network</span>
+      </a>
+
+      <button class="nav-toggle" aria-controls="nav-links" aria-expanded="false" aria-label="Toggle menu">☰</button>
+
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="{{ url_for('adopt.index') }}"          {% if request.blueprint == 'adopt' %}class="active"{% endif %}>Adopt &amp; Foster</a></li>
+        <li><a href="{{ url_for('transport_public.index') }}" {% if request.blueprint == 'transport_public' %}class="active"{% endif %}>Transport</a></li>
+        <li><a href="{{ url_for('partners.index') }}"       {% if request.blueprint == 'partners' %}class="active"{% endif %}>Shelter &amp; Rescue Partners</a></li>
+        <li><a href="{{ url_for('get_involved.index') }}"   {% if request.blueprint == 'get_involved' %}class="active"{% endif %}>Get Involved</a></li>
+        <li><a href="{{ url_for('resources.index') }}"      {% if request.blueprint == 'resources' %}class="active"{% endif %}>News &amp; Resources</a></li>
+        <li><a href="{{ url_for('about.index') }}"          {% if request.blueprint == 'about' %}class="active"{% endif %}>About</a></li>
+      </ul>
+
+      <div class="nav-give">
+        <a href="{{ url_for('give.index') }}">Give ♥</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===================== FLASH MESSAGES ===================== -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="shell" style="padding-bottom:0">
+        <ul class="flash-list">
+          {% for category, message in messages %}
+            <li class="flash {{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- ===================== PAGE CONTENT ===================== -->
+  {% block content %}{% endblock %}
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-inner">
+      <div>
+        <h3>National Animal Rescue Network</h3>
+        <p>Connecting rescue dogs with fosters, adopters, transporters, and partners nationwide.</p>
+        <p style="margin-top:12px"><a href="{{ url_for('contact.index') }}">Contact us</a></p>
+      </div>
+      <div>
+        <h3>Get involved</h3>
+        <ul>
+          <li><a href="{{ url_for('adopt.index') }}">Adopt a dog</a></li>
+          <li><a href="{{ url_for('adopt.index') }}#foster">Become a foster</a></li>
+          <li><a href="{{ url_for('transport_public.index') }}">Transport</a></li>
+          <li><a href="{{ url_for('get_involved.index') }}">Volunteer roles</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Organization</h3>
+        <ul>
+          <li><a href="{{ url_for('about.index') }}">About us</a></li>
+          <li><a href="{{ url_for('partners.index') }}">Partner shelters</a></li>
+          <li><a href="{{ url_for('give.index') }}">Give</a></li>
+          <li><a href="{{ url_for('resources.index') }}">Resources</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; {{ now.year }} The National Animal Rescue Network. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- ===================== NAV TOGGLE SCRIPT ===================== -->
+  <script>
+    (function () {
+      var btn = document.querySelector('.nav-toggle');
+      var links = document.getElementById('nav-links');
+      if (!btn || !links) return;
+      btn.addEventListener('click', function () {
+        var open = links.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        btn.textContent = open ? '✕' : '☰';
+      });
+    })();
+  </script>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Transport — National Animal Rescue Network{% endblock %}
+{% block meta_description %}Request a transport, volunteer to drive a leg, or help fund relay routes for rescue dogs across the country.{% endblock %}
+
+{% block content %}
+<div class="shell">
+  <div class="intro">
+    <div>
+      <h1 class="page-title">Transport</h1>
+      <p>Every dog in the network travels a relay — a series of short legs driven by volunteers. One leg, a few hours, and a dog moves closer to home.</p>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-bottom:36px">
+    <div class="mission-block" style="margin:0">
+      <h2 style="font-size:1.3rem">Request a transport</h2>
+      <p>Partner shelters and rescue organizations can submit a transport request using our form. We'll coordinate the route and assign legs.</p>
+      <a href="#" class="button primary" style="margin-top:8px">Submit a transport request</a>
+    </div>
+    <div class="mission-block" style="margin:0">
+      <h2 style="font-size:1.3rem">Drive a leg</h2>
+      <p>You don't need to drive the whole route — just one leg. We'll give you the pickup point, drop point, and dog details before you commit.</p>
+      <a href="{{ url_for('get_involved.index') }}" class="button secondary" style="margin-top:8px">Sign up as a ground transport volunteer</a>
+    </div>
+    <div class="mission-block" style="margin:0">
+      <h2 style="font-size:1.3rem">Aviation partnership</h2>
+      <p>Flying a route we need covered? Dogs can travel in-cabin or cargo on existing flights. Pilots with private aircraft can also fly legs directly.</p>
+      <a href="{{ url_for('get_involved.index') }}" class="button secondary" style="margin-top:8px">Inquire about aviation transport</a>
+    </div>
+  </div>
+
+  <div class="mission-block">
+    <h2>How the relay works</h2>
+    <p>A dog picked up in rural Mississippi doesn't need one driver to take them all the way to their foster in Ohio. Instead, the route is split into legs — usually 2–4 hours each — and each leg is driven by a different volunteer. Drivers meet at a prearranged handoff point, the dog moves to the next car, and the relay continues.</p>
+    <p>Coordinators plan the routes and assign legs using our private transport tracker. Drivers receive the details for their specific leg only, and log checkpoint updates along the way. Real-time coordination happens over the network's group text thread — the tracker is for status logging and record-keeping.</p>
+    <a href="{{ url_for('give.index') }}" class="button secondary" style="margin-top:8px">Fund transport operations →</a>
+  </div>
+
+  <div class="mission-block" style="margin-top:20px">
+    <h2>Already assigned to a transport?</h2>
+    <p>Use the transport tracker to log your checkpoint updates. Your coordinator will share the direct link — it's a private, sign-in-only tool and isn't listed publicly.</p>
+    <a href="{{ url_for('transport_tracker.board') }}" class="button secondary" style="margin-top:8px">Open transport tracker →</a>
+  </div>
+</div>
+{% endblock %}

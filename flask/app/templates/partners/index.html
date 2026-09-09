@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}Shelter &amp; Rescue Partners — National Animal Rescue Network{% endblock %}
+{% block meta_description %}Browse our partner shelters and rescue organizations. See current capacity status and contact information.{% endblock %}
+
+{% block extra_head %}
+<style>[data-hidden]{display:none!important}</style>
+{% endblock %}
+
+{% block content %}
+<div class="shell">
+  <div class="intro">
+    <div>
+      <h1 class="page-title">Shelter &amp; Rescue Partners</h1>
+      <p>These organizations work with the network to place dogs, share capacity, and coordinate transport. Capacity status is reviewed on a regular schedule — a "Needs Confirmation" status means we haven't received a recent update.</p>
+    </div>
+    <span class="count" id="partner-count" aria-live="polite">
+      {{ data.count }} {{ 'partner' if data.count == 1 else 'partners' }}
+    </span>
+  </div>
+
+  {% if data.get('error') %}
+  <div class="state error" role="alert">
+    <strong>The partner directory could not be loaded.</strong>
+    <span>{{ data.error }}</span>
+  </div>
+  {% elif not data.partners %}
+  <div class="state"><strong>No partners listed yet.</strong><span>Check back soon.</span></div>
+  {% else %}
+  <div class="filters" role="search" aria-label="Filter partners">
+    <label>Area / State
+      <select id="p-area">
+        <option value="">All areas</option>
+        {% for a in data.partners | map(attribute='area') | select | unique | sort %}
+          <option value="{{ a }}">{{ a }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Animal types
+      <select id="p-types">
+        <option value="">All types</option>
+        {% set types_seen = [] %}
+        {% for p in data.partners %}
+          {% for t in p.animalTypes %}
+            {% if t not in types_seen %}
+              <option value="{{ t }}">{{ t }}</option>
+              {% set _ = types_seen.append(t) %}
+            {% endif %}
+          {% endfor %}
+        {% endfor %}
+      </select>
+    </label>
+    <label>Capacity status
+      <select id="p-status">
+        <option value="">All statuses</option>
+        {% for s in ['Open','Limited','Waitlist','Needs Confirmation','Closed'] %}
+          {% if data.partners | selectattr('status','equalto',s) | list %}
+            <option value="{{ s }}">{{ s }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+  <div class="grid" id="partner-grid" aria-live="polite">
+    {% for p in data.partners %}
+    <article class="card" data-area="{{ p.area }}" data-status="{{ p.status }}"
+             data-types="{{ p.animalTypes | join(',') }}">
+      <div class="body">
+        <div class="title-row">
+          <h2 style="font-size:1.2rem">{{ p.name }}</h2>
+          <span class="id">{{ p.id }}</span>
+        </div>
+        <div style="margin:6px 0 10px">
+          <span class="badge inline {% if p.status == 'Open' %}needed{% elif p.status == 'Closed' %}urgent{% endif %}">{{ p.status }}</span>
+          {% if p.reviewOverdue %}<span style="font-size:.75rem;color:var(--inkMuted);margin-left:8px">Review overdue</span>{% endif %}
+        </div>
+        <p class="meta">{{ p.area }}</p>
+        {% if p.animalTypes %}
+        <div class="chips">{% for t in p.animalTypes %}<span class="chip">{{ t }}</span>{% endfor %}</div>
+        {% endif %}
+        {% if p.constraints %}<p class="description" style="min-height:auto">{{ p.constraints }}</p>{% endif %}
+        <p class="meta" style="margin-top:4px">Transport support: {{ p.transportSupport }}</p>
+        {% if p.lastVerified %}<p class="verified">Last verified: {{ p.lastVerified }}</p>{% endif %}
+        <div class="actions">
+          {% if p.contactUrl %}
+            <a href="{{ p.contactUrl }}" class="button primary" target="_blank" rel="noopener noreferrer">Contact this partner</a>
+          {% else %}
+            <span style="font-size:.85rem;color:var(--inkMuted)">No public contact link</span>
+          {% endif %}
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+    <div class="state" id="p-no-results" hidden>
+      <strong>No partners match these filters.</strong><span>Try clearing one or more filters.</span>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="mission-block" style="margin-top:36px">
+    <h2>Become a partner</h2>
+    <p>We work with shelters and rescue organizations that need help with transport, foster coordination, or adoption reach. If your shelter or rescue serves an underserved area and you'd like to connect with the network, we'd like to hear from you.</p>
+    <a href="#" class="button primary" style="margin-top:8px">Submit a partner application</a>
+  </div>
+</div>
+
+<script>
+(function () {
+  var areaEl   = document.getElementById('p-area');
+  var typesEl  = document.getElementById('p-types');
+  var statusEl = document.getElementById('p-status');
+  var grid     = document.getElementById('partner-grid');
+  var countEl  = document.getElementById('partner-count');
+  var noRes    = document.getElementById('p-no-results');
+  function filter() {
+    if (!grid) return;
+    var area   = areaEl   ? areaEl.value   : '';
+    var type   = typesEl  ? typesEl.value  : '';
+    var status = statusEl ? statusEl.value : '';
+    var cards  = grid.querySelectorAll('article.card');
+    var vis = 0;
+    cards.forEach(function (c) {
+      var show = (!area   || c.dataset.area   === area) &&
+                 (!type   || c.dataset.types.split(',').indexOf(type) !== -1) &&
+                 (!status || c.dataset.status === status);
+      if (show) { c.removeAttribute('data-hidden'); vis++; }
+      else      { c.setAttribute('data-hidden',''); }
+    });
+    if (countEl) countEl.textContent = vis + (vis === 1 ? ' partner' : ' partners');
+    if (noRes)   noRes.hidden = vis > 0;
+  }
+  [areaEl, typesEl, statusEl].forEach(function (el) { if (el) el.addEventListener('input', filter); });
+})();
+</script>
+{% endblock %}

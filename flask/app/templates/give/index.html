@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}Give — National Animal Rescue Network{% endblock %}
+{% block meta_description %}Support the National Animal Rescue Network through fund donations, Amazon wishlists, or funding future projects.{% endblock %}
+
+{% block extra_head %}
+<style>
+  .tab-panel[hidden]{display:none}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="shell">
+  <div class="intro">
+    <div>
+      <h1 class="page-title">Give</h1>
+      <p>Every dollar goes toward moving dogs, keeping them healthy in foster, and giving shelters the capacity support they need. Here's exactly where gifts go.</p>
+    </div>
+  </div>
+
+  {% if data.get('error') %}
+  <div class="state error" role="alert">
+    <strong>Give hub could not be loaded.</strong><span>{{ data.error }}</span>
+  </div>
+  {% else %}
+
+  <!-- Tabs -->
+  <div class="tabs" role="tablist" aria-label="Give options">
+    <button class="tab active" role="tab" aria-selected="true" aria-controls="panel-funds" id="tab-funds">Where your gift goes</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="panel-wishlists" id="tab-wishlists" tabindex="-1">Amazon wishlists</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="panel-projects" id="tab-projects" tabindex="-1">Future projects</button>
+  </div>
+
+  <!-- Funds panel -->
+  <div id="panel-funds" class="tab-panel" role="tabpanel" aria-labelledby="tab-funds">
+    {% if not data.funds %}
+    <div class="state"><strong>Fund designations coming soon.</strong></div>
+    {% else %}
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+      {% for fund in data.funds %}
+      <div class="card">
+        <div class="body" style="padding:22px">
+          <h2 style="font-size:1.2rem;margin-bottom:10px">{{ fund.name }}</h2>
+          {% if fund.description %}<p style="margin:0 0 16px;color:var(--ink);font-size:.95rem">{{ fund.description }}</p>{% endif %}
+          <div class="actions">
+            {% if fund.donateUrl %}
+              <a href="{{ fund.donateUrl }}" class="button primary" target="_blank" rel="noopener noreferrer">Donate to {{ fund.name }}</a>
+            {% else %}
+              <span style="font-size:.85rem;color:var(--inkMuted)">Donation link coming soon</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Wishlists panel -->
+  <div id="panel-wishlists" class="tab-panel" role="tabpanel" aria-labelledby="tab-wishlists" hidden>
+    {% if not data.wishlists %}
+    <div class="state"><strong>Wishlists coming soon.</strong></div>
+    {% else %}
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+      {% for wl in data.wishlists %}
+      <div class="card">
+        <div class="body" style="padding:22px">
+          <h2 style="font-size:1.2rem;margin-bottom:6px">{{ wl.programOrPartner }}</h2>
+          {% if wl.destination %}<p class="meta">Ships to: {{ wl.destination }}</p>{% endif %}
+          {% if wl.priorityNeeds %}<p style="margin:0 0 12px;color:var(--ink);font-size:.93rem">{{ wl.priorityNeeds }}</p>{% endif %}
+          {% if wl.lastVerified %}<p class="verified">Last verified: {{ wl.lastVerified }}</p>{% endif %}
+          <div class="actions">
+            {% if wl.wishlistUrl %}
+              <a href="{{ wl.wishlistUrl }}" class="button primary" target="_blank" rel="noopener noreferrer">View wishlist</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Projects panel -->
+  <div id="panel-projects" class="tab-panel" role="tabpanel" aria-labelledby="tab-projects" hidden>
+    {% if not data.projects %}
+    <div class="state"><strong>Future projects coming soon.</strong></div>
+    {% else %}
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+      {% for proj in data.projects %}
+      <div class="card">
+        <div class="body" style="padding:22px">
+          <h2 style="font-size:1.2rem;margin-bottom:8px">{{ proj.name }}</h2>
+          {% if proj.description %}<p style="margin:0 0 10px;color:var(--ink);font-size:.93rem">{{ proj.description }}</p>{% endif %}
+          <div class="progress-bar" role="progressbar" aria-valuenow="{{ proj.percent }}" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-fill" style="width:{{ proj.percent }}%"></div>
+          </div>
+          <p style="font-size:.82rem;color:var(--inkMuted);margin:0 0 10px">
+            {% if proj.goalAmount > 0 %}
+              ${{ '{:,.0f}'.format(proj.raisedAmount) }} raised of ${{ '{:,.0f}'.format(proj.goalAmount) }} goal — {{ proj.percent }}%
+            {% else %}
+              Goal TBD
+            {% endif %}
+          </p>
+          {% if proj.milestoneNote %}<p style="margin:0;font-size:.88rem;color:var(--inkMuted)">{{ proj.milestoneNote }}</p>{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  {% endif %}
+</div>
+
+<script>
+(function () {
+  var tabs   = document.querySelectorAll('[role="tab"]');
+  var panels = document.querySelectorAll('.tab-panel');
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t) {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+        t.setAttribute('tabindex', '-1');
+      });
+      panels.forEach(function (p) { p.hidden = true; });
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
+      tab.removeAttribute('tabindex');
+      var panel = document.getElementById(tab.getAttribute('aria-controls'));
+      if (panel) panel.hidden = false;
+    });
+  });
+})();
+</script>
+{% endblock %}

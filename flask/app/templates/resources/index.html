@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}News &amp; Resources — National Animal Rescue Network{% endblock %}
+{% block meta_description %}Resources for fosters, adopters, rescue partners, and advocates, plus the newsletter archive for the National Animal Rescue Network.{% endblock %}
+
+{% block extra_head %}
+<style>[data-hidden]{display:none!important}</style>
+{% endblock %}
+
+{% block content %}
+<div class="shell">
+
+  <!-- Resources directory -->
+  <section aria-labelledby="resources-title">
+    <div class="intro">
+      <div>
+        <h1 class="page-title" id="resources-title">Resources</h1>
+        <p>Guides, policy documents, and reference links for fosters, adopters, partners, and advocates.</p>
+      </div>
+      <span class="count" id="res-count" aria-live="polite">
+        {{ res_data.count }} {{ 'resource' if res_data.count == 1 else 'resources' }}
+      </span>
+    </div>
+
+    {% if res_data.get('error') %}
+    <div class="state error" role="alert">
+      <strong>Resources could not be loaded.</strong><span>{{ res_data.error }}</span>
+    </div>
+    {% elif not res_data.resources %}
+    <div class="state"><strong>No resources listed yet.</strong><span>Check back soon.</span></div>
+    {% else %}
+    <div class="filters" role="search" aria-label="Filter resources">
+      <label>Audience
+        <select id="res-audience">
+          <option value="">All audiences</option>
+          {% for a in res_data.resources | map(attribute='audience') | select | unique | sort %}
+            <option value="{{ a }}">{{ a }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Scope
+        <select id="res-scope">
+          <option value="">All scopes</option>
+          {% for s in res_data.resources | map(attribute='scope') | select | unique | sort %}
+            <option value="{{ s }}">{{ s }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+    <div id="res-list" style="display:flex;flex-direction:column;gap:10px;margin-bottom:40px" aria-live="polite">
+      {% for r in res_data.resources %}
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:14px 18px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);box-shadow:0 2px 6px rgba(18,35,26,.06)"
+           data-audience="{{ r.audience }}" data-scope="{{ r.scope }}">
+        <div>
+          <p style="margin:0 0 3px;font-weight:700;color:var(--primary)">{{ r.title }}</p>
+          {% if r.description %}<p style="margin:0 0 5px;font-size:.9rem;color:var(--ink)">{{ r.description }}</p>{% endif %}
+          <span class="chip" style="display:inline-block;margin-right:6px">{{ r.audience }}</span>
+          <span class="chip" style="display:inline-block">{{ r.scope }}</span>
+          {% if r.lastReviewed %}<span style="display:block;margin-top:5px;font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--inkMuted)">Reviewed {{ r.lastReviewed }}</span>{% endif %}
+        </div>
+        {% if r.url %}
+          <a href="{{ r.url }}" class="button secondary" style="white-space:nowrap;min-height:36px;padding:7px 14px;font-size:.88rem" target="_blank" rel="noopener noreferrer">View resource</a>
+        {% endif %}
+      </div>
+      {% endfor %}
+      <div id="res-no-results" hidden class="state">
+        <strong>No resources match.</strong><span>Try clearing a filter.</span>
+      </div>
+    </div>
+    {% endif %}
+  </section>
+
+  <!-- Newsletter archive -->
+  <section aria-labelledby="newsletter-title" style="margin-top:8px">
+    <div class="intro" style="margin-bottom:16px">
+      <div>
+        <h2 class="page-title" id="newsletter-title" style="font-size:clamp(1.6rem,3.5vw,2.4rem)">Newsletter archive</h2>
+        <p>Past issues of the NARN newsletter, newest first.</p>
+      </div>
+    </div>
+
+    {% if news_data.get('error') %}
+    <div class="state error" role="alert">
+      <strong>Newsletter archive could not be loaded.</strong><span>{{ news_data.error }}</span>
+    </div>
+    {% elif not year_groups %}
+    <div class="state"><strong>No issues archived yet.</strong><span>Check back after the first issue is published.</span></div>
+    {% else %}
+      {% for group in year_groups %}
+      <div class="year-group">
+        <p class="year-heading">{{ group.year }}</p>
+        {% for issue in group.issues %}
+        <div class="issue-card {% if issue.featured %}featured{% endif %}">
+          <div>
+            <p class="issue-title">{{ issue.title }}</p>
+            <p class="issue-date">{{ issue.publishedDate }}</p>
+          </div>
+          {% if issue.url %}
+            <a href="{{ issue.url }}" class="button secondary" style="white-space:nowrap;min-height:36px;padding:7px 14px;font-size:.88rem" target="_blank" rel="noopener noreferrer">Read this issue</a>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    {% endif %}
+  </section>
+</div>
+
+<script>
+(function () {
+  var audienceEl = document.getElementById('res-audience');
+  var scopeEl    = document.getElementById('res-scope');
+  var list       = document.getElementById('res-list');
+  var countEl    = document.getElementById('res-count');
+  var noRes      = document.getElementById('res-no-results');
+  function filter() {
+    if (!list) return;
+    var aud   = audienceEl ? audienceEl.value : '';
+    var scope = scopeEl    ? scopeEl.value    : '';
+    var items = list.querySelectorAll('[data-audience]');
+    var vis = 0;
+    items.forEach(function (el) {
+      var show = (!aud   || el.dataset.audience === aud) &&
+                 (!scope || el.dataset.scope    === scope);
+      if (show) { el.removeAttribute('data-hidden'); vis++; }
+      else      { el.setAttribute('data-hidden', ''); }
+    });
+    if (countEl) countEl.textContent = vis + (vis === 1 ? ' resource' : ' resources');
+    if (noRes)   noRes.hidden = vis > 0;
+  }
+  [audienceEl, scopeEl].forEach(function (el) { if (el) el.addEventListener('input', filter); });
+})();
+</script>
+{% endblock %}

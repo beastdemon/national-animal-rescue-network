@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}The National Animal Rescue Network{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero" aria-labelledby="hero-title">
+  <img class="hero-img" src="{{ url_for('static', filename='images/narn-homepage-hero.png') }}"
+       alt="Volunteers with a group of shelter dogs at golden hour" loading="eager">
+  <div class="hero-content">
+    <h1 id="hero-title">Every dog deserves a second leg of the journey.</h1>
+    <p>We connect rescue dogs with the fosters, transporters, adopters, and partner shelters who make the relay run.</p>
+    <div class="hero-actions">
+      <a href="{{ url_for('adopt.index') }}" class="button primary">Adopt or foster</a>
+      <a href="{{ url_for('transport_public.index') }}" class="button outline-white">Help transport</a>
+    </div>
+  </div>
+</section>
+
+<div class="shell">
+  <!-- Quick-action band -->
+  <nav class="action-band" aria-label="Quick actions">
+    <a class="action-tile" href="{{ url_for('adopt.index') }}">
+      <span class="tile-icon" aria-hidden="true">🐾</span>
+      <span class="tile-label">Adopt</span>
+      <span class="tile-sub">Find your dog</span>
+    </a>
+    <a class="action-tile" href="{{ url_for('adopt.index') }}#foster">
+      <span class="tile-icon" aria-hidden="true">🏠</span>
+      <span class="tile-label">Foster</span>
+      <span class="tile-sub">Open your home</span>
+    </a>
+    <a class="action-tile" href="{{ url_for('transport_public.index') }}">
+      <span class="tile-icon" aria-hidden="true">🚗</span>
+      <span class="tile-label">Transport</span>
+      <span class="tile-sub">Drive a leg</span>
+    </a>
+    <a class="action-tile" href="{{ url_for('give.index') }}">
+      <span class="tile-icon" aria-hidden="true">♥</span>
+      <span class="tile-label">Give</span>
+      <span class="tile-sub">Fund the work</span>
+    </a>
+  </nav>
+
+  <!-- Mission -->
+  <div class="mission-block">
+    <h2>How the relay works</h2>
+    <p>The National Animal Rescue Network is a coordination layer — not a shelter. We partner with overlooked shelters and animal control centers in underserved areas, match dogs with vetted fosters and adopters, and move them along multi-leg transport routes to where they have a real chance.</p>
+    <p>Every dog you see on this site cleared a review. Every foster and transport volunteer is verified. Every partner shelter agreed to our standards. The relay only works when every link holds.</p>
+    <a href="{{ url_for('about.index') }}" class="button secondary" style="margin-top:8px">Learn about us</a>
+  </div>
+
+  <!-- Current needs -->
+  {% if needs %}
+  <h2 class="section-title">Urgent right now</h2>
+  <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); margin-bottom:32px">
+    {% for need in needs %}
+    <div class="card">
+      <div class="body" style="padding:20px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px">
+          <span class="badge inline {% if need.urgency == 'Urgent' %}urgent{% endif %}" style="position:static;clip-path:none;box-shadow:none">
+            {{ need.urgency }}
+          </span>
+          <span class="id">{{ need.category }}</span>
+        </div>
+        <h3 style="margin:0 0 6px;color:var(--primary);font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:1.1rem">{{ need.headline }}</h3>
+        {% if need.state %}<p class="meta">{{ need.state }}</p>{% endif %}
+        {% if need.lastVerified %}<p class="verified">Verified {{ need.lastVerified }}</p>{% endif %}
+        {% if need.actionUrl %}
+        <div class="actions">
+          <a href="{{ need.actionUrl }}" class="button primary" target="_blank" rel="noopener noreferrer">{{ need.actionLabel }}</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Featured dogs -->
+  {% if featured_dogs %}
+  <h2 class="section-title">Dogs looking for a home</h2>
+  <div class="grid" style="margin-bottom:12px">
+    {% for dog in featured_dogs %}
+    <article class="card">
+      <div class="photo-wrap">
+        {% if dog.photoUrl %}
+          <img class="photo" src="{{ dog.photoUrl }}" alt="{{ dog.name }}, a dog listed through {{ dog.partner or 'the network' }}" loading="lazy" referrerpolicy="no-referrer">
+        {% else %}
+          <div class="photo-fallback" aria-hidden="true">🐾</div>
+        {% endif %}
+        <span class="badge {% if dog.urgency == 'Urgent' %}urgent{% endif %}">{{ dog.status }}</span>
+      </div>
+      <div class="body">
+        <div class="title-row">
+          <h2>{{ dog.name }}</h2>
+          <span class="id">{{ dog.id }}</span>
+        </div>
+        <p class="meta">{{ [dog.breed, dog.ageGroup, dog.size, ([dog.city, dog.state] | select | join(', '))] | select | join(' · ') }}</p>
+        <p class="description">{{ dog.description or 'Contact the listed organization for the latest approved details.' }}</p>
+        <div class="actions">
+          {% if dog.adoptionUrl %}
+            <a href="{{ dog.adoptionUrl }}" class="button primary" target="_blank" rel="noopener noreferrer">Apply to adopt</a>
+          {% endif %}
+          {% if dog.sponsorUrl %}
+            <a href="{{ dog.sponsorUrl }}" class="button secondary" target="_blank" rel="noopener noreferrer">Sponsor {{ dog.name }}</a>
+          {% endif %}
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  <p style="text-align:center;margin-bottom:32px">
+    <a href="{{ url_for('adopt.index') }}" class="button secondary">See all dogs in the network →</a>
+  </p>
+  {% endif %}
+
+  <!-- Ways to help -->
+  <div class="mission-block">
+    <h2>Ways to help right now</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:16px">
+      <div>
+        <strong style="color:var(--primary)">🏠 Foster</strong>
+        <p style="font-size:.93rem">Give a dog a home while we find the right permanent match.</p>
+        <a href="{{ url_for('adopt.index') }}#foster" class="button secondary" style="min-height:36px;padding:7px 14px;font-size:.88rem">See open foster needs</a>
+      </div>
+      <div>
+        <strong style="color:var(--primary)">🚗 Drive a leg</strong>
+        <p style="font-size:.93rem">Two to four hours. A set route. That's one leg of the relay.</p>
+        <a href="{{ url_for('get_involved.index') }}" class="button secondary" style="min-height:36px;padding:7px 14px;font-size:.88rem">Volunteer to transport</a>
+      </div>
+      <div>
+        <strong style="color:var(--primary)">📸 Photograph</strong>
+        <p style="font-size:.93rem">A good photo doubles a dog's chances. Bring a camera or a phone.</p>
+        <a href="{{ url_for('get_involved.index') }}" class="button secondary" style="min-height:36px;padding:7px 14px;font-size:.88rem">Volunteer roles</a>
+      </div>
+      <div>
+        <strong style="color:var(--primary)">♥ Give</strong>
+        <p style="font-size:.93rem">Fund transport legs, medical holds, and shelter capacity.</p>
+        <a href="{{ url_for('give.index') }}" class="button primary" style="min-height:36px;padding:7px 14px;font-size:.88rem">Give now</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

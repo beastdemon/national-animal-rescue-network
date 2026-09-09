@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+{% block title %}Transport Tracker — NARN (Private){% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  /* Override body background for the tracker — same parchment, but no dot pattern to keep it calm */
+  body { background-image: none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="shell">
+  <section class="intro" aria-labelledby="tracker-title">
+    <div>
+      <h1 class="page-title" id="tracker-title">Transport tracking</h1>
+      <p>Private, sign-in-only status logging for assigned transports. You see only the transports you're assigned to.</p>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      {% if data.signed_in %}
+        <a href="{{ url_for('transport_tracker.logout') }}" class="button secondary" style="min-height:36px;padding:7px 14px;font-size:.88rem">Sign out</a>
+      {% endif %}
+    </div>
+  </section>
+
+  {% if data.signed_in %}
+  <div class="role-banner" role="status" aria-live="polite">
+    Signed in as {{ data.viewer_email }} —
+    {% if data.is_admin %}
+      Admin view showing {{ data.count }} {{ 'transport' if data.count == 1 else 'transports' }}.
+    {% else %}
+      Driver view showing {{ data.count }} {{ 'transport' if data.count == 1 else 'transports' }}.
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <p class="note-line">Real-time coordination with drivers happens over the network's group text/WhatsApp thread — this page is for status logging only, not messaging.</p>
+
+  {% if data.get('error') %}
+  <div class="state error" role="alert">
+    <strong>The transport board could not be loaded.</strong>
+    <span>{{ data.error }}</span>
+  </div>
+  {% elif not data.signed_in %}
+  <div class="state">
+    <strong>Sign-in required</strong>
+    <span>
+      <a href="{{ url_for('transport_tracker.login') }}" class="button primary" style="margin-top:12px;display:inline-flex">Sign in with Google</a>
+    </span>
+  </div>
+  {% elif not data.transports %}
+  <div class="state">
+    <strong>Nothing assigned to you yet.</strong>
+    <span>You'll see a transport here once a coordinator assigns you as a driver, backup contact, or coordinator on one.</span>
+  </div>
+  {% else %}
+
+  <div class="board" id="transport-board" aria-live="polite">
+    {% for t in data.transports %}
+    <article class="card transport-card" id="transport-{{ t.id }}" data-transport-id="{{ t.id }}">
+      <div class="body">
+        <div class="title-row">
+          <h2 class="route">{{ t.origin }} → {{ t.destination }}</h2>
+          <span class="id">{{ t.id }}</span>
+        </div>
+        <p class="meta">
+          Driver: {{ t.driverName or 'Unassigned' }}
+          {% if t.requestingPartner %} · Requested by {{ t.requestingPartner }}{% endif %}
+          {% if t.scheduledDate %} · Scheduled {{ t.scheduledDate }}{% endif %}
+        </p>
+        <span class="badge inline status-{{ t.status | lower | replace(' ', '-') }}">{{ t.status }}</span>
+        {% if t.notes %}<p class="description" style="margin-top:10px">{{ t.notes }}</p>{% endif %}
+
+        <!-- Waypoints / map -->
+        {% if t.waypoints %}
+        <h3>Route map</h3>
+        <div class="map-wrap" id="map-{{ t.id }}"
+             data-waypoints="{{ t.waypoints | tojson | forceescape }}"></div>
+        <div class="map-legend" aria-hidden="true">
+          <span><span class="dot reached"></span>Reached</span>
+          <span><span class="dot current"></span>Current leg</span>
+          <span><span class="dot upcoming"></span>Upcoming</span>
+        </div>
+        {% endif %}
+
+        <!-- Checkpoint timeline -->
+        <h3>Checkpoint history</h3>
+        {% if t.checkpoints %}
+        <ol class="timeline" aria-label="Checkpoint history for {{ t.id }}">
+          {% for cp in t.checkpoints | reverse %}
+          <li class="timeline-item">
+            <div class="timeline-head">
+              <span class="badge inline status-{{ cp.status | lower | replace(' ', '-') }}">{{ cp.status }}</span>
+              <span class="timeline-time">{{ cp.timestamp }}</span>
+            </div>
+            {% if cp.note %}<p class="timeline-note">{{ cp.note }}</p>{% endif %}
+            <span class="timeline-by">Logged by {{ cp.loggedByEmail }}</span>
+          </li>
+          {% endfor %}
+        </ol>
+        {% else %}
+        <div class="state" style="padding:20px;margin-bottom:10px">
+          <strong>No updates logged yet.</strong>
+          <span>A checkpoint will appear here once someone logs one.</span>
+        </div>
+        {% endif %}
+
+        <!-- Log-an-update form -->
+        {% if t.canLog %}
+        <form class="log-form" method="post" data-transport-id="{{ t.id }}"
+              aria-label="Log a checkpoint for transport {{ t.id }}">
+          <label>Waypoint (optional)
+            <select name="waypoint_sequence">
+              <option value="">No specific waypoint</option>
+              {% for wp in t.waypoints %}
+              <option value="{{ wp.sequence }}">{{ wp.sequence }} — {{ wp.label }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <label>Status <span aria-hidden="true">*</span>
+            <select name="status" required>
+              {% for s in data.checkpoint_statuses %}
+              <option value="{{ s }}">{{ s }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <label class="full-width">Note (optional)
+            <textarea name="note" maxlength="500" placeholder="Anything a coordinator or the next driver should know."></textarea>
+          </label>
+          <div class="full-width" style="display:flex;align-items:center;gap:16px">
+            <button type="submit" class="button primary">Log an update</button>
+            <span class="log-status" role="status" aria-live="polite"></span>
+          </div>
+        </form>
+        {% endif %}
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+'use strict';
+
+var MARKER_COLOR = { reached: '#0B3358', current: '#C98A1D', upcoming: '#5B5445' };
+var activeMaps   = {};
+
+// ---- Init maps ----
+document.querySelectorAll('.map-wrap[data-waypoints]').forEach(function (mapEl) {
+  var transportId = mapEl.id.replace('map-', '');
+  var waypoints;
+  try { waypoints = JSON.parse(mapEl.dataset.waypoints); } catch (e) { return; }
+  if (!waypoints || !waypoints.length) return;
+  initMap(transportId, mapEl, waypoints);
+});
+
+function initMap(transportId, mapEl, waypoints) {
+  var map = L.map(mapEl, { scrollWheelZoom: false });
+  activeMaps[transportId] = map;
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+  var latLngs = waypoints.map(function (w) { return [w.lat, w.lng]; });
+  if (latLngs.length > 1) {
+    L.polyline(latLngs, { color: '#5B5445', weight: 3, opacity: .55, dashArray: '6 8' }).addTo(map);
+  }
+  waypoints.forEach(function (wp) {
+    var marker = L.circleMarker([wp.lat, wp.lng], {
+      radius: 9, color: '#FFFCF5', weight: 2,
+      fillColor: MARKER_COLOR[wp.state] || MARKER_COLOR.upcoming, fillOpacity: 1
+    }).addTo(map);
+    marker.bindPopup(wp.sequence + '. ' + wp.label);
+  });
+  if (latLngs.length === 1) { map.setView(latLngs[0], 11); }
+  else { map.fitBounds(latLngs, { padding: [24, 24] }); }
+}
+
+// ---- Log-checkpoint forms ----
+document.querySelectorAll('form.log-form').forEach(function (form) {
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var transportId = form.dataset.transportId;
+    var btn         = form.querySelector('button[type="submit"]');
+    var statusLine  = form.querySelector('.log-status');
+    var data        = new FormData(form);
+
+    btn.disabled = true;
+    statusLine.className = 'log-status';
+    statusLine.textContent = 'Saving…';
+
+    fetch('{{ url_for("transport_tracker.log_checkpoint") }}', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        transport_id:      transportId,
+        waypoint_sequence: data.get('waypoint_sequence') || '',
+        status:            data.get('status'),
+        note:              data.get('note') || ''
+      })
+    })
+    .then(function (resp) { return resp.json().then(function (body) { return { ok: resp.ok, body: body }; }); })
+    .then(function (result) {
+      if (!result.ok) throw new Error(result.body.error || 'Could not save that update. Try again.');
+      // Full page reload so the timeline and waypoint states refresh cleanly
+      window.location.reload();
+    })
+    .catch(function (err) {
+      btn.disabled = false;
+      statusLine.className = 'log-status is-error';
+      statusLine.textContent = err.message || 'Could not save that update. Try again.';
+    });
+  });
+});
+</script>
+{% endblock %}

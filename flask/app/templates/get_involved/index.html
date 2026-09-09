@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Get Involved — National Animal Rescue Network{% endblock %}
+{% block meta_description %}Volunteer with the National Animal Rescue Network as a foster, transporter, photographer, evaluator, advocate, or administrator.{% endblock %}
+
+{% block content %}
+<div class="shell">
+  <div class="intro">
+    <div>
+      <h1 class="page-title">Get Involved</h1>
+      <p>There are nine ways to be part of the relay. One of them fits your schedule, your skill set, and where you live.</p>
+    </div>
+  </div>
+
+  <!-- Urgent volunteer needs (optional, from sheet) -->
+  {% if urgent_needs %}
+  <section aria-labelledby="urgent-needs-title" style="margin-bottom:32px">
+    <h2 class="section-title" id="urgent-needs-title">Urgently needed right now</h2>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+      {% for need in urgent_needs %}
+      <div class="card">
+        <div class="body" style="padding:18px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px">
+            <span class="badge inline urgent" style="position:static;clip-path:none;box-shadow:none">Urgent</span>
+            {% if need.state %}<span class="id">{{ need.state }}</span>{% endif %}
+          </div>
+          <p style="margin:0 0 8px;font-weight:700;color:var(--primary)">{{ need.role }}</p>
+          {% if need.note %}<p style="margin:0 0 8px;font-size:.93rem;color:var(--ink)">{{ need.note }}</p>{% endif %}
+          {% if need.lastVerified %}<p class="verified">Verified {{ need.lastVerified }}</p>{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- Role cards -->
+  <h2 class="section-title" style="margin-top:{% if urgent_needs %}0{% else %}4px{% endif %}">Volunteer roles</h2>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-bottom:32px">
+    {% for role in roles %}
+    <div class="role-card">
+      <h3>{{ role.title }}</h3>
+      <p class="commitment">{{ role.commitment }}</p>
+      <p>{{ role.description }}</p>
+      {% if role.applyUrl %}
+        <a href="{{ role.applyUrl }}" class="button primary" style="margin-top:auto" target="_blank" rel="noopener noreferrer">Apply for this role</a>
+      {% else %}
+        <span style="font-size:.82rem;color:var(--inkMuted);margin-top:auto">Application form coming soon</span>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="mission-block">
+    <h2>Not sure where you fit?</h2>
+    <p>The general volunteer application lets you describe your availability, location, and skills. We'll match you to the roles that make the most sense. You can also apply to multiple roles at once.</p>
+  </div>
+</div>
+{% endblock %}
