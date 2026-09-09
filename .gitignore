@@ -1,6 +1,23 @@
 # Generated/redundant packaging artifact — regenerate with the packaging step in LAUNCH_GUIDE.md
 NARN-Google-Sites-Build-Kit.zip
 
+# Flask / Python
+.env
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+flask/venv/
+flask/.venv/
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+instance/
+
 # OS junk
 .DS_Store
 Thumbs.db
