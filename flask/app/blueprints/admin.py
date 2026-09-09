@@ -26,3 +26,25 @@ def clear_cache():
     key = request.args.get('key')
     sheets.clear_cache(key)
     return jsonify({'cleared': key or 'all'})
+
+
+@bp.route('/publish-dogs', methods=['POST'])
+def publish_dogs():
+    """
+    Publish approved shelter dog submissions to the public Dogs tab.
+    A coordinator marks 'Publish? = Yes' on rows in the form response sheet,
+    then triggers this. Nothing publishes without that human approval.
+    """
+    if not _check_token():
+        return jsonify({'error': 'Unauthorized'}), 401
+    try:
+        result = sheets.sync_submitted_dogs(
+            response_spreadsheet_id=current_app.config['SUBMIT_DOG_RESPONSE_SHEET_ID'],
+            response_sheet_name=current_app.config['SUBMIT_DOG_RESPONSE_TAB'],
+            public_spreadsheet_id=current_app.config['PUBLIC_SPREADSHEET_ID'],
+        )
+        return jsonify(result)
+    except RuntimeError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': f'Sync failed: {e}'}), 500

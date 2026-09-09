@@ -71,6 +71,16 @@
         <h3>National Animal Rescue Network</h3>
         <p>Connecting rescue dogs with fosters, adopters, transporters, and partners nationwide.</p>
         <p style="margin-top:12px"><a href="{{ url_for('contact.index') }}">Contact us</a></p>
+        {% set has_social = social.values() | select | list %}
+        {% if has_social %}
+        <div class="social-links" aria-label="Social media">
+          {% if social.facebook %}<a href="{{ social.facebook }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook">Facebook</a>{% endif %}
+          {% if social.instagram %}<a href="{{ social.instagram }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">Instagram</a>{% endif %}
+          {% if social.tiktok %}<a href="{{ social.tiktok }}" target="_blank" rel="noopener noreferrer" aria-label="TikTok" title="TikTok">TikTok</a>{% endif %}
+          {% if social.youtube %}<a href="{{ social.youtube }}" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube">YouTube</a>{% endif %}
+          {% if social.x %}<a href="{{ social.x }}" target="_blank" rel="noopener noreferrer" aria-label="X" title="X">X</a>{% endif %}
+        </div>
+        {% endif %}
       </div>
       <div>
         <h3>Get involved</h3>

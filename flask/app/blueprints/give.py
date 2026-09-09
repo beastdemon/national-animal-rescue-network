@@ -16,4 +16,8 @@ def index():
         inkind = sheets.get_inkind_donations(pub_id)
     except Exception:
         inkind = {'donation_items': [], 'count': 0}
-    return render_template('give/index.html', data=data, inkind=inkind)
+    try:
+        sponsor = sheets.get_sponsor_dogs(pub_id)
+    except Exception:
+        sponsor = {'sponsor_dogs': [], 'count': 0}
+    return render_template('give/index.html', data=data, inkind=inkind, sponsor=sponsor)

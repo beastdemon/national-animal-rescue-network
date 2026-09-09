@@ -142,3 +142,43 @@ URI for local development. For production, add your real domain's equivalent.
    ```
 4. Put Nginx or Caddy in front for HTTPS, static file serving, and compression.
 5. Add the production domain to the OAuth client's authorized redirect URIs.
+
+---
+
+## Publishing shelter dog submissions (semi-automatic)
+
+Shelters submit dogs through the "Submit or Update a Dog" Google Form. Nothing
+they submit appears on the public site automatically — a coordinator approves
+each one first. This is the safety boundary.
+
+**The workflow:**
+
+1. Shelter submits the form → response lands in the form's private response sheet.
+2. A coordinator opens that response sheet and reviews each row.
+3. In a column named **`Publish?`**, the coordinator types **`Yes`** for each
+   dog that's approved to go public. (Add this column to the response sheet
+   once — put it after the form's auto-generated columns.)
+4. Trigger the publish sync:
+   ```
+   POST /admin/publish-dogs
+   ```
+   (from localhost in dev, or with the `X-Admin-Token` header in production).
+5. Approved rows are copied into the public `Dogs` tab and marked
+   `Published? = Yes` in the response sheet so they're never published twice.
+   The public dog directory cache is cleared so they appear immediately.
+
+**Config:** set `SUBMIT_DOG_RESPONSE_SHEET_ID` and (if not the default)
+`SUBMIT_DOG_RESPONSE_TAB` in the environment to point at the form's response
+spreadsheet.
+
+**Why not fully automatic:** a shelter typo or an un-vetted dog going straight
+live is a real risk for a rescue org. The one-click approval keeps it fast but
+safe.
+
+---
+
+## Social media links
+
+Footer social icons appear only for links that are set. Add them as environment
+variables when the accounts exist:
+`SOCIAL_FACEBOOK`, `SOCIAL_INSTAGRAM`, `SOCIAL_TIKTOK`, `SOCIAL_YOUTUBE`, `SOCIAL_X`.

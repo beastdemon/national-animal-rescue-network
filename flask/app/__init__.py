@@ -68,6 +68,7 @@ def create_app(config_name: str = None) -> Flask:
             'now': _dt.utcnow(),
             'forms': app.config.get('FORMS', {}),
             'embed_form': _embed_url,
+            'social': app.config.get('SOCIAL', {}),
         }
 
     return app

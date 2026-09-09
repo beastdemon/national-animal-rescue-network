@@ -69,6 +69,28 @@ class Config:
         'state_advocate':  os.environ.get('FORM_STATE_ADVOCATE',  'https://docs.google.com/forms/d/e/1FAIpQLSc83yujRBx0X6VoiY5MoPmR7lDVvBPzAxH3_URbyDHz7uVQCg/viewform'),
     }
 
+    # ---- Social media links (empty until Amber provides them) ----
+    # Set these via env vars when the accounts exist; the footer icons only
+    # appear for links that are set.
+    SOCIAL = {
+        'facebook':  os.environ.get('SOCIAL_FACEBOOK', ''),
+        'instagram': os.environ.get('SOCIAL_INSTAGRAM', ''),
+        'tiktok':    os.environ.get('SOCIAL_TIKTOK', ''),
+        'youtube':   os.environ.get('SOCIAL_YOUTUBE', ''),
+        'x':         os.environ.get('SOCIAL_X', ''),
+    }
+
+    # ---- Shelter dog submission sync ----
+    # The spreadsheet ID of the "Submit or Update a Dog" form's response sheet,
+    # and the tab name within it (Google names the first tab "Form Responses 1").
+    # Find the ID in the response sheet URL:
+    #   https://docs.google.com/spreadsheets/d/<THIS_ID>/edit
+    SUBMIT_DOG_RESPONSE_SHEET_ID = os.environ.get('SUBMIT_DOG_RESPONSE_SHEET_ID', '1sK3_1tHw8wWjMCStQx39h1K5ducARmNxyfjIwE10jvo')
+    SUBMIT_DOG_RESPONSE_TAB = os.environ.get('SUBMIT_DOG_RESPONSE_TAB', 'Form Responses 1')
+
+    # ---- Admin token (protects /admin endpoints in production) ----
+    ADMIN_TOKEN = os.environ.get('ADMIN_TOKEN', '')
+
     # ---- Cache TTL ----
     CACHE_TTL = int(os.environ.get('CACHE_TTL', '300'))
 

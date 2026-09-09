@@ -963,6 +963,30 @@ a:focus-visible, button:focus-visible, .tab:focus-visible {
 .site-footer ul { list-style: none; padding: 0; margin: 0; }
 .site-footer a { color: rgba(255,255,255,.75); text-decoration: none; }
 .site-footer a:hover { color: #fff; text-decoration: underline; }
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+.social-links a {
+  display: inline-block;
+  padding: 6px 12px;
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 999px;
+  font-size: .8rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.85);
+  text-decoration: none;
+  transition: background .13s ease, border-color .13s ease;
+}
+.social-links a:hover {
+  background: rgba(255,255,255,.12);
+  border-color: rgba(255,255,255,.5);
+  color: #fff;
+  text-decoration: none;
+}
+
 .footer-bottom {
   margin-top: 28px;
   padding-top: 18px;

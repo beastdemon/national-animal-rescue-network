@@ -1,16 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Give — National Animal Rescue Network{% endblock %}
-{% block meta_description %}Support the National Animal Rescue Network through fund donations, Amazon wishlists, or funding future projects.{% endblock %}
-
-{% block extra_head %}
-<style>
-  .tab-panel[hidden]{display:none}
-</style>
-{% endblock %}
+{% block meta_description %}Support the National Animal Rescue Network: sponsor a dog, fund transport and medical care, support foster homes, donate supplies, or fund future projects.{% endblock %}
 
 {% from "_banner.html" import page_banner %}
 {% block content %}
-{{ page_banner('Give', "Every dollar moves dogs, keeps them healthy in foster, and gives shelters the capacity they need. Here's exactly where gifts go.", 'banners/give.jpg') }}
+{{ page_banner('Give', "Every dollar moves dogs, keeps them healthy in foster, and gives shelters the capacity they need. There's more than one way to help — pick what speaks to you.", 'banners/give.jpg') }}
 <div class="shell">
 
   {% if data.get('error') %}
@@ -19,28 +13,33 @@
   </div>
   {% else %}
 
-  <!-- Tabs -->
-  <div class="tabs" role="tablist" aria-label="Give options">
-    <button class="tab active" role="tab" aria-selected="true" aria-controls="panel-funds" id="tab-funds">Where your gift goes</button>
-    <button class="tab" role="tab" aria-selected="false" aria-controls="panel-projects" id="tab-projects" tabindex="-1">Future projects</button>
-    <button class="tab" role="tab" aria-selected="false" aria-controls="panel-wishlists" id="tab-wishlists" tabindex="-1">Amazon wishlists</button>
-    <button class="tab" role="tab" aria-selected="false" aria-controls="panel-inkind" id="tab-inkind" tabindex="-1">Donate goods</button>
-  </div>
+  <!-- Quick jump nav so all the ways to give are visible at a glance -->
+  <nav aria-label="Ways to give" style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 8px">
+    <a href="#ways" class="chip" style="text-decoration:none">Ways to give</a>
+    {% if sponsor.sponsor_dogs %}<a href="#sponsor" class="chip" style="text-decoration:none">Sponsor a dog</a>{% endif %}
+    <a href="#projects" class="chip" style="text-decoration:none">Future projects</a>
+    <a href="#goods" class="chip" style="text-decoration:none">Donate goods</a>
+    {% if data.wishlists %}<a href="#wishlists" class="chip" style="text-decoration:none">Wishlists</a>{% endif %}
+  </nav>
 
-  <!-- Funds panel -->
-  <div id="panel-funds" class="tab-panel" role="tabpanel" aria-labelledby="tab-funds">
+  <!-- ===== WAYS TO GIVE (funds) — front and center ===== -->
+  <section aria-labelledby="ways-title" id="ways">
+    <h2 class="section-title" id="ways-title">Ways to give</h2>
+    <p style="max-width:720px;color:var(--inkMuted);margin:0 0 20px">
+      Every gift is put to work moving dogs, keeping them healthy, and supporting the people who make the relay run. Choose the fund that means the most to you.
+    </p>
     {% if not data.funds %}
-    <div class="state"><strong>Fund designations coming soon.</strong></div>
+    <div class="state"><strong>Fund options coming soon.</strong></div>
     {% else %}
     <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
       {% for fund in data.funds %}
       <div class="card">
         <div class="body" style="padding:22px">
-          <h2 style="font-size:1.2rem;margin-bottom:10px">{{ fund.name }}</h2>
+          <h3 style="font-size:1.15rem;margin:0 0 10px;color:var(--primary);font-family:'Fraunces',Georgia,serif;font-weight:700">{{ fund.name }}</h3>
           {% if fund.description %}<p style="margin:0 0 16px;color:var(--ink);font-size:.95rem">{{ fund.description }}</p>{% endif %}
           <div class="actions">
             {% if fund.donateUrl %}
-              <a href="{{ fund.donateUrl }}" class="button primary" target="_blank" rel="noopener noreferrer">Donate to {{ fund.name }}</a>
+              <a href="{{ fund.donateUrl }}" class="button primary" target="_blank" rel="noopener noreferrer">Give to this fund</a>
             {% else %}
               <span style="font-size:.85rem;color:var(--inkMuted)">Donation link coming soon</span>
             {% endif %}
@@ -50,35 +49,65 @@
       {% endfor %}
     </div>
     {% endif %}
-  </div>
+  </section>
 
-  <!-- Wishlists panel -->
-  <div id="panel-wishlists" class="tab-panel" role="tabpanel" aria-labelledby="tab-wishlists" hidden>
-    {% if not data.wishlists %}
-    <div class="state"><strong>Wishlists coming soon.</strong></div>
-    {% else %}
-    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
-      {% for wl in data.wishlists %}
-      <div class="card">
-        <div class="body" style="padding:22px">
-          <h2 style="font-size:1.2rem;margin-bottom:6px">{{ wl.programOrPartner }}</h2>
-          {% if wl.destination %}<p class="meta">Ships to: {{ wl.destination }}</p>{% endif %}
-          {% if wl.priorityNeeds %}<p style="margin:0 0 12px;color:var(--ink);font-size:.93rem">{{ wl.priorityNeeds }}</p>{% endif %}
-          {% if wl.lastVerified %}<p class="verified">Last verified: {{ wl.lastVerified }}</p>{% endif %}
+  <!-- ===== SPONSOR A SPECIFIC DOG ===== -->
+  {% if sponsor.sponsor_dogs %}
+  <section aria-labelledby="sponsor-title" id="sponsor" style="margin-top:48px">
+    <h2 class="section-title" id="sponsor-title">Sponsor a dog</h2>
+    <p style="max-width:720px;color:var(--inkMuted);margin:0 0 20px">
+      These dogs need a specific push to get home — transport, vetting, or medical care. Chip in toward their goal and help get them there.
+    </p>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+      {% for dog in sponsor.sponsor_dogs %}
+      <article class="card">
+        <div class="photo-wrap">
+          {% if dog.photoUrl %}
+            <img class="photo" src="{{ dog.photoUrl }}" alt="{{ dog.name }}" loading="lazy" referrerpolicy="no-referrer"
+                 onerror="this.style.display='none';this.nextElementSibling.hidden=false">
+            <div class="photo-fallback" hidden aria-hidden="true">🐾</div>
+          {% else %}
+            <div class="photo-fallback" aria-hidden="true">🐾</div>
+          {% endif %}
+          {% if dog.funded %}<span class="badge" style="background:var(--primary)">Funded!</span>{% endif %}
+        </div>
+        <div class="body">
+          <h3 style="font-size:1.3rem;margin:0 0 8px;color:var(--primary);font-family:'Fraunces',Georgia,serif;font-weight:700">{{ dog.name }}</h3>
+          {% if dog.bio %}<p class="description">{{ dog.bio }}</p>{% endif %}
+          {% if dog.covers %}<p class="meta" style="margin-top:0">{{ dog.covers }}</p>{% endif %}
+
+          {% if dog.goalAmount > 0 %}
+          <div class="progress-bar" role="progressbar" aria-valuenow="{{ dog.percent }}" aria-valuemin="0" aria-valuemax="100" aria-label="Funding progress for {{ dog.name }}">
+            <div class="progress-fill" style="width:{{ dog.percent }}%"></div>
+          </div>
+          <p style="font-size:.85rem;color:var(--inkMuted);margin:0 0 12px">
+            <strong style="color:var(--primary)">${{ '{:,.0f}'.format(dog.raisedAmount) }}</strong>
+            raised of ${{ '{:,.0f}'.format(dog.goalAmount) }} goal — {{ dog.percent }}%
+          </p>
+          {% endif %}
+
           <div class="actions">
-            {% if wl.wishlistUrl %}
-              <a href="{{ wl.wishlistUrl }}" class="button primary" target="_blank" rel="noopener noreferrer">View wishlist</a>
+            {% if dog.sponsorUrl and not dog.funded %}
+              <a href="{{ dog.sponsorUrl }}" class="button primary" target="_blank" rel="noopener noreferrer">Sponsor {{ dog.name }}</a>
+            {% elif dog.funded %}
+              <span style="font-size:.9rem;color:var(--primary);font-weight:700">Fully funded — thank you! 🎉</span>
+            {% else %}
+              <span style="font-size:.85rem;color:var(--inkMuted)">Sponsor link coming soon</span>
             {% endif %}
           </div>
         </div>
-      </div>
+      </article>
       {% endfor %}
     </div>
-    {% endif %}
-  </div>
+  </section>
+  {% endif %}
 
-  <!-- Projects panel -->
-  <div id="panel-projects" class="tab-panel" role="tabpanel" aria-labelledby="tab-projects" hidden>
+  <!-- ===== FUTURE PROJECTS ===== -->
+  <section aria-labelledby="projects-title" id="projects" style="margin-top:48px">
+    <h2 class="section-title" id="projects-title">Future projects</h2>
+    <p style="max-width:720px;color:var(--inkMuted);margin:0 0 20px">
+      Bigger dreams we're building toward. Every contribution moves the needle.
+    </p>
     {% if not data.projects %}
     <div class="state"><strong>Future projects coming soon.</strong></div>
     {% else %}
@@ -86,8 +115,8 @@
       {% for proj in data.projects %}
       <div class="card">
         <div class="body" style="padding:22px">
-          <h2 style="font-size:1.2rem;margin-bottom:8px">{{ proj.name }}</h2>
-          {% if proj.description %}<p style="margin:0 0 10px;color:var(--ink);font-size:.93rem">{{ proj.description }}</p>{% endif %}
+          <h3 style="font-size:1.15rem;margin:0 0 8px;color:var(--primary);font-family:'Fraunces',Georgia,serif;font-weight:700">{{ proj.name }}</h3>
+          {% if proj.description %}<p style="margin:0 0 12px;color:var(--ink);font-size:.93rem">{{ proj.description }}</p>{% endif %}
           <div class="progress-bar" role="progressbar" aria-valuenow="{{ proj.percent }}" aria-valuemin="0" aria-valuemax="100">
             <div class="progress-fill" style="width:{{ proj.percent }}%"></div>
           </div>
@@ -95,7 +124,7 @@
             {% if proj.goalAmount > 0 %}
               ${{ '{:,.0f}'.format(proj.raisedAmount) }} raised of ${{ '{:,.0f}'.format(proj.goalAmount) }} goal — {{ proj.percent }}%
             {% else %}
-              Goal TBD
+              Goal coming soon
             {% endif %}
           </p>
           {% if proj.milestoneNote %}<p style="margin:0;font-size:.88rem;color:var(--inkMuted)">{{ proj.milestoneNote }}</p>{% endif %}
@@ -104,21 +133,22 @@
       {% endfor %}
     </div>
     {% endif %}
-  </div>
+  </section>
 
-  <!-- In-kind donations panel -->
-  <div id="panel-inkind" class="tab-panel" role="tabpanel" aria-labelledby="tab-inkind" hidden>
-    <p style="max-width:700px;color:var(--inkMuted);margin:0 0 20px">
-      Got gently used gear a dog could use? We take in-kind donations — crates, carriers, leashes, beds, and supplies — and get them to the shelters and fosters who need them. Please make sure items are clean and in usable condition.
+  <!-- ===== DONATE GOODS (in-kind) ===== -->
+  <section aria-labelledby="goods-title" id="goods" style="margin-top:48px">
+    <h2 class="section-title" id="goods-title">Donate gently used goods</h2>
+    <p style="max-width:720px;color:var(--inkMuted);margin:0 0 20px">
+      Got gear a dog could use? We take in-kind donations — crates, carriers, leashes, beds, bowls, and supplies — and get them to the shelters and fosters who need them. Please make sure items are clean and usable.
     </p>
     {% if not inkind.donation_items %}
-    <div class="state"><strong>In-kind donation list coming soon.</strong><span>Check back for what we're currently collecting, or use the contact form to ask.</span></div>
+    <div class="state"><strong>In-kind donation list coming soon.</strong><span>Check back for what we're collecting, or use the contact form to ask.</span></div>
     {% else %}
     <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
       {% for it in inkind.donation_items %}
       <div class="card">
         <div class="body" style="padding:22px">
-          <h2 style="font-size:1.2rem;margin-bottom:6px">{{ it.item }}</h2>
+          <h3 style="font-size:1.15rem;margin:0 0 6px;color:var(--primary);font-family:'Fraunces',Georgia,serif;font-weight:700">{{ it.item }}</h3>
           <p class="meta">Condition: {{ it.condition }}</p>
           {% if it.notes %}<p style="margin:0 0 10px;color:var(--ink);font-size:.93rem">{{ it.notes }}</p>{% endif %}
           {% if it.dropoff %}<p style="margin:0 0 10px;font-size:.88rem;color:var(--inkMuted)">{{ it.dropoff }}</p>{% endif %}
@@ -132,35 +162,40 @@
       {% endfor %}
     </div>
     {% endif %}
-    <div class="mission-block" style="margin-top:28px">
-      <h2 style="font-size:1.2rem">Have something not on the list?</h2>
+    <div class="mission-block" style="margin-top:24px">
+      <h2 style="font-size:1.15rem">Have something not on the list?</h2>
       <p>If you've got supplies you think we could use, reach out and ask — we'll let you know if it's something we can place.</p>
       <a href="{{ url_for('contact.index') }}" class="button secondary" style="margin-top:8px">Ask about a donation</a>
     </div>
-  </div>
+  </section>
+
+  <!-- ===== WISHLISTS ===== -->
+  {% if data.wishlists %}
+  <section aria-labelledby="wishlists-title" id="wishlists" style="margin-top:48px">
+    <h2 class="section-title" id="wishlists-title">Amazon &amp; online wishlists</h2>
+    <p style="max-width:720px;color:var(--inkMuted);margin:0 0 20px">
+      Prefer to buy exactly what's needed and ship it? These wishlists go straight to our programs and partners.
+    </p>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+      {% for wl in data.wishlists %}
+      <div class="card">
+        <div class="body" style="padding:22px">
+          <h3 style="font-size:1.15rem;margin:0 0 6px;color:var(--primary);font-family:'Fraunces',Georgia,serif;font-weight:700">{{ wl.programOrPartner }}</h3>
+          {% if wl.destination %}<p class="meta">Ships to: {{ wl.destination }}</p>{% endif %}
+          {% if wl.priorityNeeds %}<p style="margin:0 0 12px;color:var(--ink);font-size:.93rem">{{ wl.priorityNeeds }}</p>{% endif %}
+          {% if wl.lastVerified %}<p class="verified">Last verified: {{ wl.lastVerified }}</p>{% endif %}
+          {% if wl.wishlistUrl %}
+          <div class="actions">
+            <a href="{{ wl.wishlistUrl }}" class="button primary" target="_blank" rel="noopener noreferrer">View wishlist</a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
 
   {% endif %}
 </div>
-
-<script>
-(function () {
-  var tabs   = document.querySelectorAll('[role="tab"]');
-  var panels = document.querySelectorAll('.tab-panel');
-  tabs.forEach(function (tab) {
-    tab.addEventListener('click', function () {
-      tabs.forEach(function (t) {
-        t.classList.remove('active');
-        t.setAttribute('aria-selected', 'false');
-        t.setAttribute('tabindex', '-1');
-      });
-      panels.forEach(function (p) { p.hidden = true; });
-      tab.classList.add('active');
-      tab.setAttribute('aria-selected', 'true');
-      tab.removeAttribute('tabindex');
-      var panel = document.getElementById(tab.getAttribute('aria-controls'));
-      if (panel) panel.hidden = false;
-    });
-  });
-})();
-</script>
 {% endblock %}

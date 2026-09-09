@@ -1068,3 +1068,227 @@ def get_inkind_donations(spreadsheet_id: str) -> dict:
 
     items.sort(key=lambda i: i['item'].lower())
     return {'donation_items': items, 'count': len(items)}
+
+
+# ---------------------------------------------------------------------------
+# Sponsor a Dog — individual dogs with a funding goal + progress
+# ---------------------------------------------------------------------------
+
+@_cached(lambda spreadsheet_id: f'sponsor_dog:{spreadsheet_id}')
+def get_sponsor_dogs(spreadsheet_id: str) -> dict:
+    """
+    Individual dogs needing sponsorship, each with a photo, bio, funding goal,
+    amount raised, and a progress percentage. Distinct from the general
+    Give Funds — this is 'help THIS specific dog get home.'
+    """
+    _, rows = _read_sheet(spreadsheet_id, 'Sponsor A Dog')
+    if not rows:
+        return {'sponsor_dogs': [], 'count': 0}
+
+    dogs = []
+    for r in rows:
+        dog_id = r.get('Dog ID', '')
+        if not dog_id or dog_id.startswith('TEMPLATE-'):
+            continue
+        if r.get('Status', '') and r.get('Status', '').lower() != 'active':
+            continue
+        goal = _parse_amount(r.get('Goal Amount', ''))
+        raised = _parse_amount(r.get('Raised Amount', ''))
+        percent = min(100, max(0, round((raised / goal) * 100))) if goal > 0 else 0
+        dogs.append({
+            'id': dog_id,
+            'name': r.get('Name') or 'A dog who needs you',
+            'photoUrl': _public_url(r.get('Photo URL', '')),
+            'bio': r.get('Bio', ''),
+            'goalAmount': goal,
+            'raisedAmount': raised,
+            'percent': percent,
+            'covers': r.get('What This Covers', ''),
+            'sponsorUrl': _public_url(r.get('Sponsor URL', '')),
+            'funded': goal > 0 and raised >= goal,
+        })
+
+    # Unfunded first (still need help), then by how close to goal (most funded first)
+    dogs.sort(key=lambda d: (d['funded'], -d['percent']))
+    return {'sponsor_dogs': dogs, 'count': len(dogs)}
+
+
+# ---------------------------------------------------------------------------
+# Shelter dog submission -> approval -> publish sync
+# ---------------------------------------------------------------------------
+#
+# Flow (semi-automatic, keeps a human approval step):
+#   1. Shelter submits the "Submit or Update a Dog" Google Form.
+#   2. Responses land in that form's private response spreadsheet.
+#   3. A coordinator reviews each row and puts "Yes" in an approval column
+#      named "Publish?" (add this column to the response sheet once), and
+#      optionally fills a "Dog ID" if not provided.
+#   4. This sync copies rows where Publish? == Yes and Published? != Yes into
+#      the public Dogs tab, then marks them Published? = Yes so they aren't
+#      copied again.
+#
+# Nothing reaches the public site without that human "Publish? = Yes". This is
+# deliberate: it's the safety boundary the whole project is built around.
+
+# Maps public Dogs columns <- best-guess source columns from the form response.
+# The form's question titles become the response-sheet headers; we match on a
+# normalized (lowercased, punctuation-stripped) version so small wording
+# differences still line up. Any unmatched public column is left blank.
+_DOG_FIELD_ALIASES = {
+    'Dog ID':                   ['dog id', 'existing dog id for updateremove', 'existing dog id'],
+    'Name':                     ['dog name', 'name'],
+    'Listing Status':           ['listing status', 'status'],
+    'Primary Breed':            ['breed estimate', 'primary breed', 'breed'],
+    'Age Group':                ['age group', 'age'],
+    'Sex':                      ['sex'],
+    'Size':                     ['size'],
+    'City':                     ['city', 'current location city state', 'current location'],
+    'State':                    ['state'],
+    'Partner Organization':     ['partner id', 'organization', 'partner organization'],
+    'Foster Needed?':           ['foster or transport need', 'foster needed'],
+    'Urgency':                  ['urgency', 'urgent safety notes'],
+    'Good With Dogs':           ['good with dogs'],
+    'Good With Cats':           ['good with cats'],
+    'Good With Children':       ['good with children'],
+    'Short Description':        ['public bio', 'short description', 'bio'],
+    'Photo URL':                ['photo video uploads', 'photo url', 'photo'],
+    'Adoption Application URL': ['adoption application url for this dog', 'adoption application url'],
+    'Sponsor URL':              ['sponsorship eligibility goal', 'sponsor url'],
+    'Featured?':                ['featured'],
+    'Last Verified':            ['timestamp', 'last verified'],
+}
+
+
+def _norm_header(h: str) -> str:
+    return re.sub(r'[^a-z0-9 ]', '', str(h or '').lower()).strip()
+
+
+def sync_submitted_dogs(response_spreadsheet_id: str, response_sheet_name: str,
+                        public_spreadsheet_id: str) -> dict:
+    """
+    Copy approved dog submissions from the form response sheet into the public
+    Dogs tab. Returns a summary dict. Requires a 'Publish?' column in the
+    response sheet (coordinator sets it to 'Yes' to approve) and adds/uses a
+    'Published?' column to avoid double-publishing.
+
+    Raises RuntimeError with a clear message if the response sheet is missing
+    the required approval columns, so a coordinator knows exactly what to add.
+    """
+    service = _get_service(write=True)
+
+    # --- Read the response sheet (with header row) ---
+    resp = (
+        service.spreadsheets().values()
+        .get(spreadsheetId=response_spreadsheet_id, range=response_sheet_name,
+             valueRenderOption='FORMATTED_VALUE')
+        .execute()
+    )
+    rows = resp.get('values', [])
+    if len(rows) < 2:
+        return {'published': 0, 'skipped': 0, 'message': 'No submissions to review.'}
+
+    headers = [str(h).strip() for h in rows[0]]
+    norm_headers = [_norm_header(h) for h in headers]
+
+    def col_idx(*candidates):
+        for cand in candidates:
+            n = _norm_header(cand)
+            if n in norm_headers:
+                return norm_headers.index(n)
+        return None
+
+    publish_idx = col_idx('Publish?', 'Publish', 'Approved', 'Approve')
+    if publish_idx is None:
+        raise RuntimeError(
+            "The response sheet has no 'Publish?' column. Add a column named "
+            "'Publish?' and put 'Yes' in it for each reviewed, approved dog "
+            "before running the sync."
+        )
+    published_idx = col_idx('Published?', 'Published')
+
+    # If there's no Published? column, we add one so we can mark rows done.
+    if published_idx is None:
+        published_idx = len(headers)
+        headers.append('Published?')
+        norm_headers.append(_norm_header('Published?'))
+        # Write the new header cell
+        service.spreadsheets().values().update(
+            spreadsheetId=response_spreadsheet_id,
+            range=f"'{response_sheet_name}'!{_col_letter(published_idx)}1",
+            valueInputOption='RAW', body={'values': [['Published?']]}
+        ).execute()
+
+    # --- Build public Dogs rows from approved, unpublished submissions ---
+    public_headers, _ = _read_sheet(public_spreadsheet_id, 'Dogs')
+    if not public_headers:
+        # Fall back to the canonical order if the Dogs tab has no header yet
+        public_headers = list(_DOG_FIELD_ALIASES.keys())
+
+    to_publish = []          # rows for the public Dogs tab
+    rows_to_mark = []        # response-sheet row numbers (1-based) to mark published
+    skipped = 0
+
+    for i, row in enumerate(rows[1:], start=2):  # start=2 -> 1-based incl. header
+        def cell(idx):
+            return row[idx].strip() if idx is not None and idx < len(row) else ''
+
+        approved = cell(publish_idx).lower() in ('yes', 'true', 'approved', 'y')
+        already = cell(published_idx).lower() in ('yes', 'true', 'y')
+        if not approved or already:
+            skipped += 1
+            continue
+
+        # Map each public column from the best-matching source column
+        record = {}
+        for public_col in public_headers:
+            aliases = _DOG_FIELD_ALIASES.get(public_col, [public_col])
+            src = col_idx(*aliases)
+            record[public_col] = cell(src)
+
+        # Sensible defaults so the public directory logic accepts the row
+        if not record.get('Dog ID'):
+            record['Dog ID'] = f'SUB-{i}'
+        if not record.get('Listing Status'):
+            record['Listing Status'] = 'Available'
+        if not record.get('Urgency'):
+            record['Urgency'] = 'Routine'
+
+        to_publish.append([record.get(col, '') for col in public_headers])
+        rows_to_mark.append(i)
+
+    if not to_publish:
+        return {'published': 0, 'skipped': skipped,
+                'message': 'No newly approved submissions to publish.'}
+
+    # --- Append to public Dogs tab ---
+    service.spreadsheets().values().append(
+        spreadsheetId=public_spreadsheet_id, range='Dogs',
+        valueInputOption='USER_ENTERED', insertDataOption='INSERT_ROWS',
+        body={'values': to_publish}
+    ).execute()
+
+    # --- Mark those response rows Published? = Yes ---
+    data = [{
+        'range': f"'{response_sheet_name}'!{_col_letter(published_idx)}{r}",
+        'values': [['Yes']]
+    } for r in rows_to_mark]
+    service.spreadsheets().values().batchUpdate(
+        spreadsheetId=response_spreadsheet_id,
+        body={'valueInputOption': 'RAW', 'data': data}
+    ).execute()
+
+    # Bust the public dogs cache so the new dogs show right away
+    clear_cache(f'dogs:{public_spreadsheet_id}')
+
+    return {'published': len(to_publish), 'skipped': skipped,
+            'message': f'Published {len(to_publish)} dog(s) to the public directory.'}
+
+
+def _col_letter(idx0: int) -> str:
+    """0-based column index -> spreadsheet letter (0->A, 26->AA)."""
+    n = idx0 + 1
+    letters = ''
+    while n > 0:
+        n, rem = divmod(n - 1, 26)
+        letters = chr(65 + rem) + letters
+    return letters
