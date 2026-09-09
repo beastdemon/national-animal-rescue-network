@@ -963,30 +963,6 @@ a:focus-visible, button:focus-visible, .tab:focus-visible {
 .site-footer ul { list-style: none; padding: 0; margin: 0; }
 .site-footer a { color: rgba(255,255,255,.75); text-decoration: none; }
 .site-footer a:hover { color: #fff; text-decoration: underline; }
-.social-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 14px;
-}
-.social-links a {
-  display: inline-block;
-  padding: 6px 12px;
-  border: 1px solid rgba(255,255,255,.25);
-  border-radius: 999px;
-  font-size: .8rem;
-  font-weight: 600;
-  color: rgba(255,255,255,.85);
-  text-decoration: none;
-  transition: background .13s ease, border-color .13s ease;
-}
-.social-links a:hover {
-  background: rgba(255,255,255,.12);
-  border-color: rgba(255,255,255,.5);
-  color: #fff;
-  text-decoration: none;
-}
-
 .footer-bottom {
   margin-top: 28px;
   padding-top: 18px;
@@ -995,6 +971,32 @@ a:focus-visible, button:focus-visible, .tab:focus-visible {
   text-align: center;
   color: rgba(255,255,255,.45);
 }
+
+/* Logo-only social icons, centered under the copyright line */
+.social-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  margin-top: 14px;
+}
+.social-icons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  color: rgba(255,255,255,.7);
+  background: rgba(255,255,255,.06);
+  transition: color .14s ease, background .14s ease, transform .12s ease;
+}
+.social-icons a:hover {
+  color: #fff;
+  background: var(--accent);
+  transform: translateY(-2px);
+}
+.social-icons svg { display: block; }
 
 @media (max-width: 720px) {
   .site-footer .footer-inner { grid-template-columns: 1fr; gap: 20px; }
