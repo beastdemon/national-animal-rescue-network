@@ -2,13 +2,12 @@
 {% block title %}Events &amp; Fundraisers — National Animal Rescue Network{% endblock %}
 {% block meta_description %}Upcoming adoption events, fundraisers, and community gatherings for the National Animal Rescue Network.{% endblock %}
 
+{% from "_banner.html" import page_banner %}
 {% block content %}
+{{ page_banner('Events & Fundraisers', 'Adoption days, fundraisers, and community events. Come meet dogs, support the network, or host something of your own.', 'banners/events.jpg') }}
 <div class="shell">
-  <div class="intro">
-    <div>
-      <h1 class="page-title">Events &amp; Fundraisers</h1>
-      <p>Adoption days, fundraisers, and community events. Come meet dogs, support the network, or host something of your own.</p>
-    </div>
+  <div class="intro" style="border-bottom:none;padding-bottom:0;margin-bottom:20px">
+    <div></div>
     <span class="count">{{ data.count }} {{ 'event' if data.count == 1 else 'events' }}</span>
   </div>
 

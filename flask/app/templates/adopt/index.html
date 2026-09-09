@@ -9,7 +9,9 @@
 </style>
 {% endblock %}
 
+{% from "_banner.html" import page_banner %}
 {% block content %}
+{{ page_banner('Adopt & Foster', 'Bring a dog home for good, or open your home while we find their match.', 'banners/adopt.jpg') }}
 <div class="shell">
 
   <!-- ===== APPLY BANNER ===== -->
@@ -26,7 +28,7 @@
   <section aria-labelledby="dogs-title">
     <div class="intro">
       <div>
-        <h1 class="page-title" id="dogs-title">Dogs in the network</h1>
+        <h2 class="section-title" id="dogs-title" style="margin-top:8px">Dogs in the network</h2>
         <p>Every dog here cleared review. Use the adoption or sponsor link on any card to take the next step.</p>
       </div>
       <span class="count" id="dog-count" aria-live="polite">
@@ -136,7 +138,7 @@
   <section aria-labelledby="foster-title" id="foster" style="margin-top:52px">
     <div class="intro">
       <div>
-        <h1 class="page-title" id="foster-title">Open foster needs</h1>
+        <h2 class="section-title" id="foster-title" style="margin-top:8px">Open foster needs</h2>
         <p>These are active, verified requests for foster placement. Apply directly using the card's link.</p>
       </div>
       <span class="count" id="foster-count" aria-live="polite">

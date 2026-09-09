@@ -6,13 +6,12 @@
 <style>[data-hidden]{display:none!important}</style>
 {% endblock %}
 
+{% from "_banner.html" import page_banner %}
 {% block content %}
+{{ page_banner('Shelter & Rescue Partners', 'Organizations that work with the network to place dogs, share capacity, and coordinate transport.', 'banners/partners.jpg') }}
 <div class="shell">
-  <div class="intro">
-    <div>
-      <h1 class="page-title">Shelter &amp; Rescue Partners</h1>
-      <p>These organizations work with the network to place dogs, share capacity, and coordinate transport. Capacity status is reviewed on a regular schedule — a "Needs Confirmation" status means we haven't received a recent update.</p>
-    </div>
+  <div class="intro" style="border-bottom:none;padding-bottom:0;margin-bottom:20px">
+    <div><p style="margin:0;color:var(--inkMuted);max-width:700px">Capacity status is reviewed on a regular schedule — a "Needs Confirmation" status means we haven't received a recent update.</p></div>
     <span class="count" id="partner-count" aria-live="polite">
       {{ data.count }} {{ 'partner' if data.count == 1 else 'partners' }}
     </span>

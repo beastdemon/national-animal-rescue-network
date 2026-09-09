@@ -2,13 +2,12 @@
 {% block title %}Local News — National Animal Rescue Network{% endblock %}
 {% block meta_description %}Local news, updates, and announcements from the National Animal Rescue Network.{% endblock %}
 
+{% from "_banner.html" import page_banner %}
 {% block content %}
+{{ page_banner('Local News', 'Updates, wins, and announcements from across the network.') }}
 <div class="shell">
-  <div class="intro">
-    <div>
-      <h1 class="page-title">Local News</h1>
-      <p>Updates, wins, and announcements from across the network. For the full monthly roundup, see the <a href="{{ url_for('resources.index') }}">newsletter archive</a>.</p>
-    </div>
+  <div class="intro" style="border-bottom:none;padding-bottom:0;margin-bottom:20px">
+    <div><p style="margin:0;color:var(--inkMuted)">For the full monthly roundup, see the <a href="{{ url_for('resources.index') }}">newsletter archive</a>.</p></div>
     <span class="count">{{ data.count }} {{ 'update' if data.count == 1 else 'updates' }}</span>
   </div>
 

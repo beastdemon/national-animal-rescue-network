@@ -6,14 +6,10 @@
 <style>[data-hidden]{display:none!important}</style>
 {% endblock %}
 
+{% from "_banner.html" import page_banner %}
 {% block content %}
+{{ page_banner('About the network', 'A coordination layer for animal rescue — not a shelter, not an adoption agency. We connect the dogs, people, and organizations already doing the work.', 'banners/about.jpg') }}
 <div class="shell">
-  <div class="intro">
-    <div>
-      <h1 class="page-title">About the network</h1>
-      <p>We are a coordination layer for animal rescue — not a shelter, not an adoption agency. We connect the dogs, people, and organizations already doing the work.</p>
-    </div>
-  </div>
 
   <div class="mission-block">
     <h2>What we do</h2>

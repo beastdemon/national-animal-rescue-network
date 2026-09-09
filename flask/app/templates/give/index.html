@@ -8,14 +8,10 @@
 </style>
 {% endblock %}
 
+{% from "_banner.html" import page_banner %}
 {% block content %}
+{{ page_banner('Give', "Every dollar moves dogs, keeps them healthy in foster, and gives shelters the capacity they need. Here's exactly where gifts go.", 'banners/give.jpg') }}
 <div class="shell">
-  <div class="intro">
-    <div>
-      <h1 class="page-title">Give</h1>
-      <p>Every dollar goes toward moving dogs, keeping them healthy in foster, and giving shelters the capacity support they need. Here's exactly where gifts go.</p>
-    </div>
-  </div>
 
   {% if data.get('error') %}
   <div class="state error" role="alert">

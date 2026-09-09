@@ -1,0 +1,19 @@
+{#
+  Reusable interior-page banner.
+  Usage in a template:
+    {% from "_banner.html" import page_banner %}
+    {{ page_banner('Adopt & Foster', 'Find your dog, or open your home.', 'banners/adopt.jpg') }}
+
+  If image is omitted or empty, renders the photo-less navy gradient variant.
+#}
+{% macro page_banner(title, subtitle='', image='') %}
+<section class="page-banner {% if not image %}no-photo{% endif %}" aria-label="{{ title }}">
+  {% if image %}
+    <img class="banner-img" src="{{ url_for('static', filename='images/' ~ image) }}" alt="" aria-hidden="true" loading="eager">
+  {% endif %}
+  <div class="banner-content">
+    <h1>{{ title }}</h1>
+    {% if subtitle %}<p>{{ subtitle }}</p>{% endif %}
+  </div>
+</section>
+{% endmacro %}

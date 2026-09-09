@@ -6,15 +6,16 @@
 <style>[data-hidden]{display:none!important}</style>
 {% endblock %}
 
+{% from "_banner.html" import page_banner %}
 {% block content %}
+{{ page_banner('News & Resources', 'Guides, reference links, and the monthly newsletter for fosters, adopters, partners, and advocates.', 'banners/resources.jpg') }}
 <div class="shell">
 
   <!-- Resources directory -->
   <section aria-labelledby="resources-title">
-    <div class="intro">
+    <div class="intro" style="border-bottom:none;padding-bottom:0;margin-bottom:20px">
       <div>
-        <h1 class="page-title" id="resources-title">Resources</h1>
-        <p>Guides, policy documents, and reference links for fosters, adopters, partners, and advocates.</p>
+        <h2 class="section-title" id="resources-title" style="margin-top:0">Resources</h2>
       </div>
       <span class="count" id="res-count" aria-live="polite">
         {{ res_data.count }} {{ 'resource' if res_data.count == 1 else 'resources' }}

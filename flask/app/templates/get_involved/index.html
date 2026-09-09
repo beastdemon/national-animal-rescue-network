@@ -2,14 +2,10 @@
 {% block title %}Get Involved — National Animal Rescue Network{% endblock %}
 {% block meta_description %}Volunteer with the National Animal Rescue Network as a foster, transporter, photographer, evaluator, advocate, or administrator.{% endblock %}
 
+{% from "_banner.html" import page_banner %}
 {% block content %}
+{{ page_banner('Get Involved', 'There are many ways to be part of the relay. One of them fits your schedule, your skills, and where you live.', 'banners/get-involved.jpg') }}
 <div class="shell">
-  <div class="intro">
-    <div>
-      <h1 class="page-title">Get Involved</h1>
-      <p>There are nine ways to be part of the relay. One of them fits your schedule, your skill set, and where you live.</p>
-    </div>
-  </div>
 
   <!-- Urgent volunteer needs (optional, from sheet) -->
   {% if urgent_needs %}

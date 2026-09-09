@@ -2,14 +2,10 @@
 {% block title %}Contact — National Animal Rescue Network{% endblock %}
 {% block meta_description %}Contact the National Animal Rescue Network with questions, media inquiries, or partnership interest.{% endblock %}
 
+{% from "_banner.html" import page_banner %}
 {% block content %}
+{{ page_banner('Contact', 'Questions, media, or a tip? Send it here. For adopting, fostering, or volunteering, use the links on those pages — they route to the right team.', 'banners/contact.jpg') }}
 <div class="shell">
-  <div class="intro">
-    <div>
-      <h1 class="page-title">Contact</h1>
-      <p>Use the form below for general questions and inquiries. For specific actions — adopting, fostering, volunteering, applying as a partner — use the links on those pages instead; they route your submission to the right team.</p>
-    </div>
-  </div>
 
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start" class="contact-grid">
     <div class="mission-block" style="margin:0">

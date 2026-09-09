@@ -2,14 +2,10 @@
 {% block title %}Transport — National Animal Rescue Network{% endblock %}
 {% block meta_description %}Request a transport, volunteer to drive a leg, or help fund relay routes for rescue dogs across the country.{% endblock %}
 
+{% from "_banner.html" import page_banner %}
 {% block content %}
+{{ page_banner('Transport', 'Every dog in the network travels a relay — a series of short legs driven by volunteers. One leg, a few hours, and a dog moves closer to home.', 'banners/transport.jpg') }}
 <div class="shell">
-  <div class="intro">
-    <div>
-      <h1 class="page-title">Transport</h1>
-      <p>Every dog in the network travels a relay — a series of short legs driven by volunteers. One leg, a few hours, and a dog moves closer to home.</p>
-    </div>
-  </div>
 
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-bottom:36px">
     <div class="mission-block" style="margin:0">
