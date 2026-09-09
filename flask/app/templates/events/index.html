@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Events &amp; Fundraisers — National Animal Rescue Network{% endblock %}
+{% block meta_description %}Upcoming adoption events, fundraisers, and community gatherings for the National Animal Rescue Network.{% endblock %}
+
+{% block content %}
+<div class="shell">
+  <div class="intro">
+    <div>
+      <h1 class="page-title">Events &amp; Fundraisers</h1>
+      <p>Adoption days, fundraisers, and community events. Come meet dogs, support the network, or host something of your own.</p>
+    </div>
+    <span class="count">{{ data.count }} {{ 'event' if data.count == 1 else 'events' }}</span>
+  </div>
+
+  {% if data.get('error') %}
+  <div class="state error" role="alert">
+    <strong>Events could not be loaded.</strong><span>{{ data.error }}</span>
+  </div>
+  {% elif not data.events %}
+  <div class="state">
+    <strong>No upcoming events right now.</strong>
+    <span>Check back soon, or propose your own event below.</span>
+  </div>
+  {% else %}
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+    {% for e in data.events %}
+    <article class="card">
+      <div class="body" style="padding:22px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px">
+          <span class="badge inline {% if e.featured %}needed{% endif %}" style="position:static;clip-path:none;box-shadow:none">{{ e.type }}</span>
+          <span class="id">{{ e.id }}</span>
+        </div>
+        <h2 style="font-size:1.25rem;margin-bottom:6px">{{ e.title }}</h2>
+        <p class="meta">
+          {{ [e.date, e.time] | select | join(' · ') }}
+          {% if e.location %}<br>{{ e.location }}{% if e.state %}, {{ e.state }}{% endif %}{% endif %}
+        </p>
+        {% if e.description %}<p class="description" style="-webkit-line-clamp:4">{{ e.description }}</p>{% endif %}
+        {% if e.rsvpUrl %}
+        <div class="actions">
+          <a href="{{ e.rsvpUrl }}" class="button primary" target="_blank" rel="noopener noreferrer">{{ e.rsvpLabel }}</a>
+        </div>
+        {% endif %}
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="mission-block" style="margin-top:36px">
+    <h2>Host an event or fundraiser</h2>
+    <p>Want to run an adoption day, organize a fundraiser, or host a community event on behalf of the network? Submit a proposal and a coordinator will follow up. Events aren't authorized until approved in writing, but we love new ideas.</p>
+    <a href="#" class="button primary" style="margin-top:8px" data-form="event-proposal">Propose an event</a>
+  </div>
+</div>
+{% endblock %}

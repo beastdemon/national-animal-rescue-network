@@ -12,4 +12,8 @@ def index():
         data = sheets.get_give_hub(pub_id)
     except Exception as e:
         data = {'funds': [], 'wishlists': [], 'projects': [], 'error': str(e)}
-    return render_template('give/index.html', data=data)
+    try:
+        inkind = sheets.get_inkind_donations(pub_id)
+    except Exception:
+        inkind = {'donation_items': [], 'count': 0}
+    return render_template('give/index.html', data=data, inkind=inkind)

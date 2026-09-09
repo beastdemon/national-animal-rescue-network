@@ -33,6 +33,8 @@ def create_app(config_name: str = None) -> Flask:
     from .blueprints.transport_tracker import bp as tracker_bp
     from .blueprints.contact import bp as contact_bp
     from .blueprints.admin import bp as admin_bp
+    from .blueprints.events import bp as events_bp
+    from .blueprints.news import bp as news_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(adopt_bp)
@@ -45,6 +47,8 @@ def create_app(config_name: str = None) -> Flask:
     app.register_blueprint(tracker_bp)
     app.register_blueprint(contact_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(events_bp)
+    app.register_blueprint(news_bp)
 
     # Inject `now` into every template so base.html can render the copyright year
     from datetime import datetime as _dt

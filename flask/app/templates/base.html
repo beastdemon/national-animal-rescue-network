@@ -36,7 +36,9 @@
         <li><a href="{{ url_for('transport_public.index') }}" {% if request.blueprint == 'transport_public' %}class="active"{% endif %}>Transport</a></li>
         <li><a href="{{ url_for('partners.index') }}"       {% if request.blueprint == 'partners' %}class="active"{% endif %}>Shelter &amp; Rescue Partners</a></li>
         <li><a href="{{ url_for('get_involved.index') }}"   {% if request.blueprint == 'get_involved' %}class="active"{% endif %}>Get Involved</a></li>
-        <li><a href="{{ url_for('resources.index') }}"      {% if request.blueprint == 'resources' %}class="active"{% endif %}>News &amp; Resources</a></li>
+        <li><a href="{{ url_for('events.index') }}"         {% if request.blueprint == 'events' %}class="active"{% endif %}>Events</a></li>
+        <li><a href="{{ url_for('news.index') }}"           {% if request.blueprint == 'news' %}class="active"{% endif %}>News</a></li>
+        <li><a href="{{ url_for('resources.index') }}"      {% if request.blueprint == 'resources' %}class="active"{% endif %}>Resources</a></li>
         <li><a href="{{ url_for('about.index') }}"          {% if request.blueprint == 'about' %}class="active"{% endif %}>About</a></li>
       </ul>
 
@@ -83,7 +85,10 @@
         <h3>Organization</h3>
         <ul>
           <li><a href="{{ url_for('about.index') }}">About us</a></li>
+          <li><a href="{{ url_for('about.index') }}#board">Board &amp; meetings</a></li>
           <li><a href="{{ url_for('partners.index') }}">Partner shelters</a></li>
+          <li><a href="{{ url_for('events.index') }}">Events</a></li>
+          <li><a href="{{ url_for('news.index') }}">Local news</a></li>
           <li><a href="{{ url_for('give.index') }}">Give</a></li>
           <li><a href="{{ url_for('resources.index') }}">Resources</a></li>
         </ul>

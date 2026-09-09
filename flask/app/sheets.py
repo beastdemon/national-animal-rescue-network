@@ -577,10 +577,10 @@ def _extract_year(pub_display: str, title: str) -> str:
 # State champions + congressional delegation
 # ---------------------------------------------------------------------------
 
-@_cached(lambda spreadsheet_id: f'champions:{spreadsheet_id}')
+@_cached(lambda spreadsheet_id: f'advocates:{spreadsheet_id}')
 def get_state_champions(spreadsheet_id: str) -> dict:
     delegation = _read_delegation(spreadsheet_id)
-    _, rows = _read_sheet(spreadsheet_id, 'State Champions')
+    _, rows = _read_sheet(spreadsheet_id, 'State Advocates')
     if not rows:
         return {'states': [], 'count': 0}
 
@@ -900,3 +900,171 @@ def _sanitize_for_sheet(note: str) -> str:
     if note and note[0] in ('=', '+', '-', '@'):
         return "'" + note
     return note
+
+
+# ---------------------------------------------------------------------------
+# Events / Fundraisers
+# ---------------------------------------------------------------------------
+
+@_cached(lambda spreadsheet_id: f'events:{spreadsheet_id}')
+def get_events(spreadsheet_id: str) -> dict:
+    """
+    Upcoming events and fundraisers. Sorted by date, soonest first.
+    Past events (Event Date before today) are hidden automatically.
+    """
+    _, display_rows, raw_rows = _read_sheet_raw(spreadsheet_id, 'Events')
+    if not display_rows:
+        return {'events': [], 'count': 0}
+
+    today = date.today()
+    events = []
+    for d, r in zip(display_rows, raw_rows):
+        eid = d.get('Event ID', '')
+        if not eid or eid.startswith('TEMPLATE-'):
+            continue
+        if d.get('Status', '') and d.get('Status', '') not in ('Published', 'Confirmed', 'Open'):
+            continue
+        date_raw = r.get('Event Date')
+        event_date = _serial_to_date(date_raw) if isinstance(date_raw, (int, float)) else _parse_date(d.get('Event Date', ''))
+        # Hide events that have already passed
+        if event_date is not None and event_date < today:
+            continue
+        events.append({
+            'id': eid,
+            'title': d.get('Title') or 'Network event',
+            'type': d.get('Event Type') or 'Event',
+            'date': d.get('Event Date', ''),
+            'time': d.get('Time', ''),
+            'location': d.get('Location', ''),
+            'state': d.get('State', ''),
+            'description': d.get('Description', ''),
+            'rsvpLabel': d.get('RSVP Label') or 'Learn more',
+            'rsvpUrl': _public_url(d.get('RSVP URL', '')),
+            'featured': d.get('Featured', '').lower() == 'yes',
+            '_sort': event_date.toordinal() if event_date else float('inf'),
+        })
+
+    events.sort(key=lambda e: (not e['featured'], e['_sort']))
+    for e in events:
+        del e['_sort']
+    return {'events': events, 'count': len(events)}
+
+
+# ---------------------------------------------------------------------------
+# Board meetings
+# ---------------------------------------------------------------------------
+
+@_cached(lambda spreadsheet_id: f'board_meetings:{spreadsheet_id}')
+def get_board_meetings(spreadsheet_id: str) -> dict:
+    """
+    Public board / monthly meeting schedule. Upcoming meetings first, then
+    a short list of recent past meetings (with minutes links if available).
+    """
+    _, display_rows, raw_rows = _read_sheet_raw(spreadsheet_id, 'Board Meetings')
+    if not display_rows:
+        return {'upcoming': [], 'past': [], 'count': 0}
+
+    today = date.today()
+    upcoming, past = [], []
+    for d, r in zip(display_rows, raw_rows):
+        mid = d.get('Meeting ID', '')
+        if not mid or mid.startswith('TEMPLATE-'):
+            continue
+        date_raw = r.get('Meeting Date')
+        meeting_date = _serial_to_date(date_raw) if isinstance(date_raw, (int, float)) else _parse_date(d.get('Meeting Date', ''))
+        entry = {
+            'id': mid,
+            'title': d.get('Title') or 'Board meeting',
+            'date': d.get('Meeting Date', ''),
+            'time': d.get('Time', ''),
+            'location': d.get('Location Or Link', ''),
+            'agendaUrl': _public_url(d.get('Agenda URL', '')),
+            'minutesUrl': _public_url(d.get('Minutes URL', '')),
+            'openToPublic': d.get('Open To Public', '').lower() == 'yes',
+            '_sort': meeting_date.toordinal() if meeting_date else 0,
+        }
+        if meeting_date is not None and meeting_date < today:
+            past.append(entry)
+        else:
+            upcoming.append(entry)
+
+    upcoming.sort(key=lambda m: m['_sort'])       # soonest first
+    past.sort(key=lambda m: -m['_sort'])          # most recent first
+    past = past[:6]                                # only show recent past meetings
+    for m in upcoming + past:
+        del m['_sort']
+    return {'upcoming': upcoming, 'past': past, 'count': len(upcoming) + len(past)}
+
+
+# ---------------------------------------------------------------------------
+# Local news
+# ---------------------------------------------------------------------------
+
+@_cached(lambda spreadsheet_id: f'local_news:{spreadsheet_id}')
+def get_local_news(spreadsheet_id: str) -> dict:
+    """
+    Local news / announcements feed, distinct from the emailed newsletter.
+    Most recent first.
+    """
+    _, display_rows, raw_rows = _read_sheet_raw(spreadsheet_id, 'Local News')
+    if not display_rows:
+        return {'news_items': [], 'count': 0}
+
+    items = []
+    for d, r in zip(display_rows, raw_rows):
+        nid = d.get('News ID', '')
+        if not nid or nid.startswith('TEMPLATE-'):
+            continue
+        if d.get('Active', '') and d.get('Active', '').lower() != 'yes':
+            continue
+        date_raw = r.get('Date')
+        news_date = _serial_to_date(date_raw) if isinstance(date_raw, (int, float)) else _parse_date(d.get('Date', ''))
+        items.append({
+            'id': nid,
+            'headline': d.get('Headline') or 'Update',
+            'date': d.get('Date', ''),
+            'state': d.get('State', ''),
+            'summary': d.get('Summary', ''),
+            'linkLabel': d.get('Link Label') or 'Read more',
+            'linkUrl': _public_url(d.get('Link URL', '')),
+            'featured': d.get('Featured', '').lower() == 'yes',
+            '_sort': news_date.toordinal() if news_date else -1,
+        })
+
+    items.sort(key=lambda i: (not i['featured'], -i['_sort']))
+    for i in items:
+        del i['_sort']
+    return {'news_items': items, 'count': len(items)}
+
+
+# ---------------------------------------------------------------------------
+# In-kind donations (used crates, supplies, physical goods)
+# ---------------------------------------------------------------------------
+
+@_cached(lambda spreadsheet_id: f'inkind:{spreadsheet_id}')
+def get_inkind_donations(spreadsheet_id: str) -> dict:
+    """
+    Accepted physical/in-kind donations (used crates, supplies, etc.),
+    distinct from Amazon wishlists (buy-new) and cash Give Funds.
+    """
+    _, rows = _read_sheet(spreadsheet_id, 'In-Kind Donations')
+    if not rows:
+        return {'donation_items': [], 'count': 0}
+
+    items = []
+    for r in rows:
+        name = r.get('Item', '')
+        if not name or name.startswith('TEMPLATE-'):
+            continue
+        if r.get('Active', '') and r.get('Active', '').lower() != 'yes':
+            continue
+        items.append({
+            'item': name,
+            'condition': r.get('Condition Needed', '') or 'Good, clean condition',
+            'notes': r.get('Notes', ''),
+            'dropoff': r.get('Dropoff Or Pickup', ''),
+            'contactUrl': _public_url(r.get('Contact URL', '')),
+        })
+
+    items.sort(key=lambda i: i['item'].lower())
+    return {'donation_items': items, 'count': len(items)}

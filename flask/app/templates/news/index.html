@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Local News — National Animal Rescue Network{% endblock %}
+{% block meta_description %}Local news, updates, and announcements from the National Animal Rescue Network.{% endblock %}
+
+{% block content %}
+<div class="shell">
+  <div class="intro">
+    <div>
+      <h1 class="page-title">Local News</h1>
+      <p>Updates, wins, and announcements from across the network. For the full monthly roundup, see the <a href="{{ url_for('resources.index') }}">newsletter archive</a>.</p>
+    </div>
+    <span class="count">{{ data.count }} {{ 'update' if data.count == 1 else 'updates' }}</span>
+  </div>
+
+  {% if data.get('error') %}
+  <div class="state error" role="alert">
+    <strong>News could not be loaded.</strong><span>{{ data.error }}</span>
+  </div>
+  {% elif not data.news_items %}
+  <div class="state">
+    <strong>No news posted yet.</strong>
+    <span>Check back soon.</span>
+  </div>
+  {% else %}
+  <div style="display:flex;flex-direction:column;gap:16px">
+    {% for item in data.news_items %}
+    <article class="card {% if item.featured %}{% endif %}" style="{% if item.featured %}border-left:4px solid var(--accentAlt){% endif %}">
+      <div class="body" style="padding:22px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:6px">
+          <h2 style="font-size:1.3rem">{{ item.headline }}</h2>
+          {% if item.featured %}<span class="badge inline needed" style="position:static;clip-path:none;box-shadow:none">Featured</span>{% endif %}
+        </div>
+        <p class="meta">{{ [item.date, item.state] | select | join(' · ') }}</p>
+        {% if item.summary %}<p style="margin:8px 0 12px;color:var(--ink)">{{ item.summary }}</p>{% endif %}
+        {% if item.linkUrl %}
+        <a href="{{ item.linkUrl }}" class="button secondary" style="min-height:36px;padding:7px 14px;font-size:.88rem" target="_blank" rel="noopener noreferrer">{{ item.linkLabel }}</a>
+        {% endif %}
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="mission-block" style="margin-top:36px">
+    <h2>Have a story or tip?</h2>
+    <p>If you have a local news story, a rescue win worth sharing, or a resource we should know about, send it our way through the contact form.</p>
+    <a href="{{ url_for('contact.index') }}" class="button secondary" style="margin-top:8px">Submit a story or tip</a>
+  </div>
+</div>
+{% endblock %}

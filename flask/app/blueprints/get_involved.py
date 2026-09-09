@@ -42,11 +42,11 @@ ROLES = [
         'param': 'evaluator',
     },
     {
-        'id': 'advocacy',
-        'title': 'Advocacy',
-        'description': 'Speak for the network at local hearings, on shelter policy, or in your own network when a case needs visibility.',
-        'commitment': 'As issues come up',
-        'param': 'advocacy',
+        'id': 'state-advocate',
+        'title': 'State Advocate',
+        'description': "Be the network's point of contact and voice in your state — coordinate local fosters, transporters, and partner shelters, and speak up for animal-welfare policy at local hearings and on shelter issues when a case needs visibility. One advocate per state.",
+        'commitment': 'Ongoing, a few hours a week',
+        'param': 'state-advocate',
     },
     {
         'id': 'events',
@@ -54,13 +54,6 @@ ROLES = [
         'description': 'Run a table at an adoption event, or organize a fundraiser end to end — pitch, logistics, and payout.',
         'commitment': 'Per event, a few hours to a few weeks of lead time',
         'param': 'events',
-    },
-    {
-        'id': 'state-rep',
-        'title': 'State representative',
-        'description': "Be the network's point of contact in your state — coordinate local fosters, transporters, and partner shelters.",
-        'commitment': 'Ongoing, a few hours a week',
-        'param': 'state-rep',
     },
     {
         'id': 'admin',

@@ -1,4 +1,4 @@
-"""About page — mission, state champions, board."""
+"""About page — mission, state champions, board meetings."""
 from flask import Blueprint, render_template, current_app
 from .. import sheets
 
@@ -12,4 +12,12 @@ def index():
         champions_data = sheets.get_state_champions(pub_id)
     except Exception as e:
         champions_data = {'states': [], 'count': 0, 'error': str(e)}
-    return render_template('about/index.html', champions_data=champions_data)
+    try:
+        meetings_data = sheets.get_board_meetings(pub_id)
+    except Exception as e:
+        meetings_data = {'upcoming': [], 'past': [], 'count': 0, 'error': str(e)}
+    return render_template(
+        'about/index.html',
+        champions_data=champions_data,
+        meetings_data=meetings_data,
+    )

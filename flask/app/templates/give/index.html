@@ -26,8 +26,9 @@
   <!-- Tabs -->
   <div class="tabs" role="tablist" aria-label="Give options">
     <button class="tab active" role="tab" aria-selected="true" aria-controls="panel-funds" id="tab-funds">Where your gift goes</button>
-    <button class="tab" role="tab" aria-selected="false" aria-controls="panel-wishlists" id="tab-wishlists" tabindex="-1">Amazon wishlists</button>
     <button class="tab" role="tab" aria-selected="false" aria-controls="panel-projects" id="tab-projects" tabindex="-1">Future projects</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="panel-wishlists" id="tab-wishlists" tabindex="-1">Amazon wishlists</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="panel-inkind" id="tab-inkind" tabindex="-1">Donate goods</button>
   </div>
 
   <!-- Funds panel -->
@@ -107,6 +108,39 @@
       {% endfor %}
     </div>
     {% endif %}
+  </div>
+
+  <!-- In-kind donations panel -->
+  <div id="panel-inkind" class="tab-panel" role="tabpanel" aria-labelledby="tab-inkind" hidden>
+    <p style="max-width:700px;color:var(--inkMuted);margin:0 0 20px">
+      Got gently used gear a dog could use? We take in-kind donations — crates, carriers, leashes, beds, and supplies — and get them to the shelters and fosters who need them. Please make sure items are clean and in usable condition.
+    </p>
+    {% if not inkind.donation_items %}
+    <div class="state"><strong>In-kind donation list coming soon.</strong><span>Check back for what we're currently collecting, or use the contact form to ask.</span></div>
+    {% else %}
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+      {% for it in inkind.donation_items %}
+      <div class="card">
+        <div class="body" style="padding:22px">
+          <h2 style="font-size:1.2rem;margin-bottom:6px">{{ it.item }}</h2>
+          <p class="meta">Condition: {{ it.condition }}</p>
+          {% if it.notes %}<p style="margin:0 0 10px;color:var(--ink);font-size:.93rem">{{ it.notes }}</p>{% endif %}
+          {% if it.dropoff %}<p style="margin:0 0 10px;font-size:.88rem;color:var(--inkMuted)">{{ it.dropoff }}</p>{% endif %}
+          {% if it.contactUrl %}
+          <div class="actions">
+            <a href="{{ it.contactUrl }}" class="button primary" target="_blank" rel="noopener noreferrer">Arrange a donation</a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <div class="mission-block" style="margin-top:28px">
+      <h2 style="font-size:1.2rem">Have something not on the list?</h2>
+      <p>If you've got supplies you think we could use, reach out and ask — we'll let you know if it's something we can place.</p>
+      <a href="{{ url_for('contact.index') }}" class="button secondary" style="margin-top:8px">Ask about a donation</a>
+    </div>
   </div>
 
   {% endif %}

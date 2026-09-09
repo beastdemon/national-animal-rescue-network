@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}About — National Animal Rescue Network{% endblock %}
-{% block meta_description %}Learn about the National Animal Rescue Network's mission, our state champions, and how we work with overlooked shelters across the country.{% endblock %}
+{% block meta_description %}Learn about the National Animal Rescue Network's mission, our state advocates, board meetings, and how we work with overlooked shelters across the country.{% endblock %}
 
 {% block extra_head %}
 <style>[data-hidden]{display:none!important}</style>
@@ -23,20 +23,20 @@
 
   <div class="mission-block" style="margin-top:20px">
     <h2>How we're structured</h2>
-    <p>The network is run by a core team and a group of state-level champions — one per state — who coordinate local fosters, transporters, and partner relationships in their area. Champions are network-appointed advocates, distinct from any elected office. Each state champion is responsible for knowing what's happening on the ground in their state and connecting local resources to the national relay.</p>
-    <p>Open champion seats are listed below. If your state doesn't have a champion yet and you're interested in the role, use the apply link on that state's card.</p>
+    <p>The network is run by a core team and a group of state advocates — one per state — who coordinate local fosters, transporters, and partner relationships in their area, and speak up for animal-welfare policy in their state. State advocates are network-appointed volunteers, distinct from any elected office. Each one is responsible for knowing what's happening on the ground in their state and connecting local resources to the national relay.</p>
+    <p>Open state advocate seats are listed below. If your state doesn't have an advocate yet and you're interested in the role, use the apply link on that state's card.</p>
   </div>
 
-  <!-- State Champions -->
-  <h2 class="section-title">State Champions</h2>
+  <!-- State Advocates -->
+  <h2 class="section-title">State Advocates</h2>
   {% if champions_data.get('error') %}
   <div class="state error" role="alert">
-    <strong>State champions could not be loaded.</strong><span>{{ champions_data.error }}</span>
+    <strong>State advocates could not be loaded.</strong><span>{{ champions_data.error }}</span>
   </div>
   {% elif not champions_data.states %}
-  <div class="state"><strong>No state champions listed yet.</strong><span>Check back soon.</span></div>
+  <div class="state"><strong>No state advocates listed yet.</strong><span>Check back soon.</span></div>
   {% else %}
-  <div class="filters" role="search" aria-label="Filter state champions" style="margin-bottom:22px">
+  <div class="filters" role="search" aria-label="Filter state advocates" style="margin-bottom:22px">
     <label>Search state
       <input id="champ-search" type="search" autocomplete="off" placeholder="State name…">
     </label>
@@ -47,7 +47,7 @@
       {% if s.status == 'Filled' %}
       <div class="photo-wrap">
         {% if s.photoUrl %}
-          <img class="photo" src="{{ s.photoUrl }}" alt="{{ s.championName }}, state champion for {{ s.state }}"
+          <img class="photo" src="{{ s.photoUrl }}" alt="{{ s.championName }}, state advocate for {{ s.state }}"
                loading="lazy" referrerpolicy="no-referrer"
                onerror="this.style.display='none';this.nextElementSibling.hidden=false">
           <div class="photo-fallback" hidden aria-hidden="true">🎗️</div>
@@ -79,10 +79,10 @@
           {% endif %}
           {% if s.bio %}<p class="description">{{ s.bio }}</p>{% endif %}
         {% else %}
-          <p class="meta">No champion appointed yet for {{ s.state }}.</p>
+          <p class="meta">No advocate appointed yet for {{ s.state }}.</p>
           {% if s.applyUrl %}
           <div class="actions">
-            <a href="{{ s.applyUrl }}" class="button primary" target="_blank" rel="noopener noreferrer">Apply to be champion</a>
+            <a href="{{ s.applyUrl }}" class="button primary" target="_blank" rel="noopener noreferrer">Apply to be state advocate</a>
           </div>
           {% endif %}
         {% endif %}
@@ -118,6 +118,51 @@
     <h2>State legislature directories</h2>
     <p>We list each state's US Senators and House Representatives above. For state-level legislators (state senate and state house), see the <a href="https://www.congress.gov/state-legislature-websites" target="_blank" rel="noopener noreferrer">Congress.gov index of state legislature websites</a> — there are too many state districts to hand-maintain here.</p>
   </div>
+
+  <!-- Board Meetings -->
+  <h2 class="section-title" id="board">Board &amp; Meetings</h2>
+  {% if meetings_data.get('error') %}
+  <div class="state error" role="alert">
+    <strong>Meeting schedule could not be loaded.</strong><span>{{ meetings_data.error }}</span>
+  </div>
+  {% elif not meetings_data.upcoming and not meetings_data.past %}
+  <div class="state"><strong>No meetings posted yet.</strong><span>Board meeting dates will appear here once scheduled.</span></div>
+  {% else %}
+    {% if meetings_data.upcoming %}
+    <h3 style="font-family:'Fraunces',Georgia,serif;color:var(--primary);margin:0 0 12px">Upcoming meetings</h3>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:28px">
+      {% for m in meetings_data.upcoming %}
+      <div class="card"><div class="body" style="padding:18px 22px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+          <div>
+            <p style="margin:0 0 4px;font-weight:700;color:var(--primary)">{{ m.title }}</p>
+            <p class="meta" style="margin:0">{{ [m.date, m.time] | select | join(' · ') }}{% if m.location %} · {{ m.location }}{% endif %}</p>
+            {% if m.openToPublic %}<span class="chip" style="display:inline-block;margin-top:8px">Open to the public</span>{% endif %}
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            {% if m.agendaUrl %}<a href="{{ m.agendaUrl }}" class="button secondary" style="min-height:34px;padding:6px 12px;font-size:.85rem" target="_blank" rel="noopener noreferrer">Agenda</a>{% endif %}
+          </div>
+        </div>
+      </div></div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if meetings_data.past %}
+    <h3 style="font-family:'Fraunces',Georgia,serif;color:var(--primary);margin:0 0 12px">Recent meetings</h3>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      {% for m in meetings_data.past %}
+      <div class="issue-card">
+        <div>
+          <p class="issue-title">{{ m.title }}</p>
+          <p class="issue-date">{{ m.date }}</p>
+        </div>
+        {% if m.minutesUrl %}<a href="{{ m.minutesUrl }}" class="button secondary" style="min-height:34px;padding:6px 12px;font-size:.85rem" target="_blank" rel="noopener noreferrer">Minutes</a>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  {% endif %}
 </div>
 
 <script>
