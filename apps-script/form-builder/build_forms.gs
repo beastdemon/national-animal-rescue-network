@@ -38,7 +38,13 @@ var CONFIG = {
   RESPONSE_TIME: 'within 5–7 days',
 
   // A folder name created in your Drive to hold all response sheets.
-  REGISTRY_TITLE: 'NARN Form Registry'
+  REGISTRY_TITLE: 'NARN Form Registry',
+
+  // File-upload questions only work on Google Workspace accounts, NOT personal
+  // Gmail. On a personal account they cause "Failed to set response destination"
+  // errors. Leave false for a personal Gmail. Set true only once these forms
+  // live in a Workspace account, then re-run to add the upload fields.
+  ENABLE_FILE_UPLOADS: false
 };
 
 /** Entry point — run this. */
@@ -191,19 +197,46 @@ function newForm_(title, description) {
 function finalize_(form, confirmationText) {
   form.setConfirmationMessage(confirmationText);
 
-  // Dedicated response spreadsheet
-  var ss = SpreadsheetApp.create('[Responses] ' + form.getTitle());
-  form.setDestination(FormApp.DestinationType.SPREADSHEET, ss.getId());
+  // Dedicated response spreadsheet. Linking a destination can transiently fail
+  // (especially right after form edits), so create the sheet, then link with a
+  // short retry, and never let a link failure abort the whole run — the form
+  // still works; responses can be linked to a sheet later from the form UI.
+  var responseSheetUrl = '';
+  var ss = null;
+  try {
+    ss = SpreadsheetApp.create('[Responses] ' + form.getTitle());
+    responseSheetUrl = ss.getUrl();
+  } catch (e) {
+    Logger.log('Could not create response sheet for "' + form.getTitle() + '": ' + e);
+  }
 
-  // Share both with the collaborator
+  if (ss) {
+    var linked = false;
+    for (var attempt = 0; attempt < 2 && !linked; attempt++) {
+      try {
+        Utilities.sleep(attempt === 0 ? 300 : 1500);  // brief settle, longer on retry
+        form.setDestination(FormApp.DestinationType.SPREADSHEET, ss.getId());
+        linked = true;
+      } catch (e) {
+        Logger.log('setDestination attempt ' + (attempt + 1) + ' failed for "' +
+                   form.getTitle() + '": ' + e);
+      }
+    }
+    if (!linked) {
+      Logger.log('NOTE: "' + form.getTitle() + '" was created but its responses ' +
+                 'were not auto-linked to a sheet. Link it manually in the form: ' +
+                 'Responses tab -> Link to Sheets. Form still works.');
+    }
+    try { ss.addEditor(CONFIG.COLLABORATOR_EMAIL); } catch (e) { Logger.log('Sheet editor add failed: ' + e); }
+  }
+
   try { form.addEditor(CONFIG.COLLABORATOR_EMAIL); } catch (e) { Logger.log('Form editor add failed: ' + e); }
-  try { ss.addEditor(CONFIG.COLLABORATOR_EMAIL); } catch (e) { Logger.log('Sheet editor add failed: ' + e); }
 
   return {
     name: form.getTitle(),
     publishedUrl: form.getPublishedUrl(),
     editUrl: form.getEditUrl(),
-    responseSheetUrl: ss.getUrl()
+    responseSheetUrl: responseSheetUrl
   };
 }
 
@@ -237,6 +270,30 @@ function addSection_(form, title, description) {
 
 function addYesNoUnknown_(form, title) {
   return form.addMultipleChoiceItem().setTitle(title).setChoiceValues(['Yes', 'No', 'Unknown']);
+}
+
+/**
+ * Adds a file-upload question ONLY if CONFIG.ENABLE_FILE_UPLOADS is true
+ * (Workspace accounts). On a personal Gmail it adds a paragraph-text note
+ * instead, telling the submitter how to send files, so the form still works
+ * and doesn't break the response-sheet link.
+ */
+function addFileUpload_(form, title, helpText) {
+  if (CONFIG.ENABLE_FILE_UPLOADS) {
+    try {
+      var item = form.addFileUploadItem().setTitle(title);
+      if (helpText) item.setHelpText(helpText);
+      return;
+    } catch (e) {
+      Logger.log('File upload "' + title + '" failed, falling back to text note: ' + e);
+    }
+  }
+  // Fallback: a note + text field for a link, since uploads aren't available.
+  form.addParagraphTextItem()
+    .setTitle(title + ' — paste a shareable link')
+    .setHelpText((helpText ? helpText + ' ' : '') +
+      'File uploads are not enabled on this form. Paste a Google Drive, Dropbox, ' +
+      'or other shareable link instead (make sure sharing is turned on).');
 }
 
 /* ============================================================================
@@ -485,14 +542,7 @@ function buildSubmitOrUpdateDog() {
   addPara_(form, 'Foster or transport need', false);
   addPara_(form, 'Adoption requirements', false);
   addPara_(form, 'Public bio', false);
-  try {
-    form.addImageItem().setTitle('Photo upload note').setHelpText('Use the file upload below for photos. File upload requires Google sign-in.');
-  } catch (e) {}
-  try {
-    form.addFileUploadItem()
-      .setTitle('Photo / video uploads')
-      .setHelpText('Photos or short videos of the dog.');
-  } catch (e) { Logger.log('File upload item skipped (requires Workspace / sign-in policy): ' + e); }
+  addFileUpload_(form, 'Photo / video uploads', 'Photos or short videos of the dog.');
   addChoice_(form, 'I confirm photo rights to publish', ['Yes'], false);
   addText_(form, 'Adoption application URL for this dog', false);
   addPara_(form, 'Sponsorship eligibility / goal', false);
@@ -553,9 +603,7 @@ function buildTransportRequest() {
   addChoice_(form, 'Overnight needed?', ['Yes', 'No'], false);
   addPara_(form, 'Route flexibility', false);
   addText_(form, 'Funds requested and estimate', false);
-  try {
-    form.addFileUploadItem().setTitle('Records upload').setHelpText('Health certificates, vaccination records, etc.');
-  } catch (e) { Logger.log('File upload item skipped: ' + e); }
+  addFileUpload_(form, 'Records upload', 'Health certificates, vaccination records, etc.');
   addText_(form, 'Emergency contact', false);
   addChoice_(form, 'I acknowledge accuracy and the cancellation policy', ['Yes'], true);
 
@@ -585,10 +633,8 @@ function buildDogEvaluationSubmission() {
   addPara_(form, 'Recommended conditions', false);
   addChoice_(form, 'Further evaluation needed?', ['Yes', 'No'], false);
   addChoice_(form, 'Overall result', ['Ready', 'Ready with conditions', 'Needs further work', 'Not ready'], true);
-  try {
-    form.addFileUploadItem().setTitle('Report upload', false);
-    form.addFileUploadItem().setTitle('Video / photo upload', false);
-  } catch (e) { Logger.log('File upload item skipped: ' + e); }
+  addFileUpload_(form, 'Report upload', 'Your written evaluation report.');
+  addFileUpload_(form, 'Video / photo upload', 'Any supporting video or photos.');
   addChoice_(form, 'I certify accuracy and confidentiality', ['Yes'], true);
 
   return finalize_(form,
