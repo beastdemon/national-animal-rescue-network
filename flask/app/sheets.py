@@ -98,19 +98,27 @@ def _read_sheet(spreadsheet_id: str, sheet_name: str):
     Return (headers, rows) where headers is a list of trimmed strings and
     rows is a list of dicts keyed by header name. Missing cells are ''.
     Uses FORMATTED_VALUE so display strings match what staff see.
+    Returns ([], []) if the tab doesn't exist yet rather than raising.
     """
     service = _get_service()
-    result = (
-        service.spreadsheets()
-        .values()
-        .get(
-            spreadsheetId=spreadsheet_id,
-            range=sheet_name,
-            valueRenderOption='FORMATTED_VALUE',
-            dateTimeRenderOption='FORMATTED_STRING',
+    try:
+        result = (
+            service.spreadsheets()
+            .values()
+            .get(
+                spreadsheetId=spreadsheet_id,
+                range=sheet_name,
+                valueRenderOption='FORMATTED_VALUE',
+                dateTimeRenderOption='FORMATTED_STRING',
+            )
+            .execute()
         )
-        .execute()
-    )
+    except Exception as e:
+        # "Unable to parse range" means the tab doesn't exist yet — treat as empty
+        err = str(e)
+        if 'Unable to parse range' in err or '400' in err:
+            return [], []
+        raise
     raw_rows = result.get('values', [])
     if len(raw_rows) < 2:
         return [], []
@@ -127,31 +135,38 @@ def _read_sheet_raw(spreadsheet_id: str, sheet_name: str):
     """
     Same as _read_sheet but also returns UNFORMATTED_VALUE rows (for date
     comparison). Returns (headers, display_rows, raw_rows).
+    Returns ([], [], []) if the tab doesn't exist yet rather than raising.
     """
     service = _get_service()
     sheet_range = sheet_name
-    display_result = (
-        service.spreadsheets()
-        .values()
-        .get(
-            spreadsheetId=spreadsheet_id,
-            range=sheet_range,
-            valueRenderOption='FORMATTED_VALUE',
-            dateTimeRenderOption='FORMATTED_STRING',
+    try:
+        display_result = (
+            service.spreadsheets()
+            .values()
+            .get(
+                spreadsheetId=spreadsheet_id,
+                range=sheet_range,
+                valueRenderOption='FORMATTED_VALUE',
+                dateTimeRenderOption='FORMATTED_STRING',
+            )
+            .execute()
         )
-        .execute()
-    )
-    raw_result = (
-        service.spreadsheets()
-        .values()
-        .get(
-            spreadsheetId=spreadsheet_id,
-            range=sheet_range,
-            valueRenderOption='UNFORMATTED_VALUE',
-            dateTimeRenderOption='SERIAL_NUMBER',
+        raw_result = (
+            service.spreadsheets()
+            .values()
+            .get(
+                spreadsheetId=spreadsheet_id,
+                range=sheet_range,
+                valueRenderOption='UNFORMATTED_VALUE',
+                dateTimeRenderOption='SERIAL_NUMBER',
+            )
+            .execute()
         )
-        .execute()
-    )
+    except Exception as e:
+        err = str(e)
+        if 'Unable to parse range' in err or '400' in err:
+            return [], [], []
+        raise
     disp_rows = display_result.get('values', [])
     raw_rows_data = raw_result.get('values', [])
 
