@@ -75,15 +75,29 @@ def _build_apply_url(base_url: str, param: str) -> str:
 @bp.route('/')
 def index():
     pub_id = current_app.config['PUBLIC_SPREADSHEET_ID']
-    form_url = current_app.config.get('GENERAL_VOLUNTEER_FORM_URL', '')
+    forms = current_app.config.get('FORMS', {})
+    volunteer_url = forms.get('volunteer', '')
+    advocate_url = forms.get('state_advocate', '')
 
     try:
         urgent_needs = sheets.get_volunteer_needs(pub_id)
     except Exception:
         urgent_needs = []
 
-    roles = [
-        {**role, 'applyUrl': _build_apply_url(form_url, role['param'])}
-        for role in ROLES
-    ]
+    evaluator_url = forms.get('evaluator', '')
+
+    # Roles with their own dedicated application forms
+    dedicated = {
+        'state-advocate': advocate_url,
+        'evaluator': evaluator_url,
+    }
+
+    roles = []
+    for role in ROLES:
+        if role['id'] in dedicated:
+            apply_url = dedicated[role['id']]
+        else:
+            apply_url = _build_apply_url(volunteer_url, role['param'])
+        roles.append({**role, 'applyUrl': apply_url})
+
     return render_template('get_involved/index.html', roles=roles, urgent_needs=urgent_needs)

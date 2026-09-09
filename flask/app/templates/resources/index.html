@@ -73,9 +73,12 @@
   <section aria-labelledby="newsletter-title" style="margin-top:8px">
     <div class="intro" style="margin-bottom:16px">
       <div>
-        <h2 class="page-title" id="newsletter-title" style="font-size:clamp(1.6rem,3.5vw,2.4rem)">Newsletter archive</h2>
-        <p>Past issues of the NARN newsletter, newest first.</p>
+        <h2 class="page-title" id="newsletter-title" style="font-size:clamp(1.6rem,3.5vw,2.4rem)">Newsletter</h2>
+        <p>About one email a month — dogs placed, transport wins, upcoming events, and ways to help.</p>
       </div>
+      {% if forms.newsletter %}
+      <a href="{{ forms.newsletter }}" class="button primary" target="_blank" rel="noopener noreferrer">Sign up for the newsletter</a>
+      {% endif %}
     </div>
 
     {% if news_data.get('error') %}

@@ -44,8 +44,30 @@ class Config:
     GOOGLE_OAUTH_CLIENT_ID = os.environ.get('GOOGLE_OAUTH_CLIENT_ID', '')
     GOOGLE_OAUTH_CLIENT_SECRET = os.environ.get('GOOGLE_OAUTH_CLIENT_SECRET', '')
 
-    # ---- Volunteer form ----
-    GENERAL_VOLUNTEER_FORM_URL = os.environ.get('GENERAL_VOLUNTEER_FORM_URL', '')
+    # ---- Volunteer form (kept for backward compat; also in FORMS below) ----
+    GENERAL_VOLUNTEER_FORM_URL = os.environ.get(
+        'GENERAL_VOLUNTEER_FORM_URL',
+        'https://docs.google.com/forms/d/e/1FAIpQLSefNYceX2vLE4M5EGdiYRwGJ8Mz6CVuveFhJ-eJYHc6cR_5Og/viewform'
+    )
+
+    # ---- Google Form live URLs (share/viewform links) ----
+    # Each can be overridden by an env var of the same name if forms are
+    # rebuilt. Defaults are the current live forms.
+    FORMS = {
+        'adoption':        os.environ.get('FORM_ADOPTION',        'https://docs.google.com/forms/d/e/1FAIpQLSfcD6dSMTWMZSg2UA-_AV3yRMO8klhueH4dVvSDi69RBv73jA/viewform'),
+        'foster':          os.environ.get('FORM_FOSTER',          'https://docs.google.com/forms/d/e/1FAIpQLSfDh_unULLyJ9jOta0FIkN64jkBOWTHinr2DO6zDS0ZVuJCrQ/viewform'),
+        'volunteer':       os.environ.get('FORM_VOLUNTEER',       'https://docs.google.com/forms/d/e/1FAIpQLSefNYceX2vLE4M5EGdiYRwGJ8Mz6CVuveFhJ-eJYHc6cR_5Og/viewform'),
+        'evaluator':       os.environ.get('FORM_EVALUATOR',       'https://docs.google.com/forms/d/e/1FAIpQLSdkBXJOiagbtLPs6b9FvCGfM_sBraprKKHrkhxNzvLzl_lGJg/viewform'),
+        'partner':         os.environ.get('FORM_PARTNER',         'https://docs.google.com/forms/d/e/1FAIpQLSe8DvMPsqwmMbaPzFsfGGp_rT_uzLXlpu2KzgDPPqhjZHt1Wg/viewform'),
+        'submit_dog':      os.environ.get('FORM_SUBMIT_DOG',      'https://docs.google.com/forms/d/e/1FAIpQLScCjCFzP0UHUeaWc8h3kfUVz2Isyo-Mxsfqe_KWOeFWu-rRwg/viewform'),
+        'rescue_availability': os.environ.get('FORM_RESCUE_AVAILABILITY', 'https://docs.google.com/forms/d/e/1FAIpQLSdQphpGYrp6TTvUshXmDDONCZFB9Rp16fDVAacA-TLabYaQ2Q/viewform'),
+        'transport_request': os.environ.get('FORM_TRANSPORT_REQUEST', 'https://docs.google.com/forms/d/e/1FAIpQLScU-FsNLKU-nNvvgQeCYfG8NI1QorTmFpvB83vim9ivpNRNLg/viewform'),
+        'evaluation_submission': os.environ.get('FORM_EVALUATION_SUBMISSION', 'https://docs.google.com/forms/d/e/1FAIpQLScwQTOHyOJg0RGOeQB4dpvBzhTUj3EiIbg_0kah9QgNF7Ea4Q/viewform'),
+        'event_proposal':  os.environ.get('FORM_EVENT_PROPOSAL',  'https://docs.google.com/forms/d/e/1FAIpQLSflPY5yvNeLiYRnBxPHIiIQL5jSFcuYoNf0uf65WUYM622alg/viewform'),
+        'newsletter':      os.environ.get('FORM_NEWSLETTER',      'https://docs.google.com/forms/d/e/1FAIpQLSdPcrg0Ah3ZbgvQjVIalmE28A5xcj_aIlOtKDbbx9PZrJIhZg/viewform'),
+        'contact':         os.environ.get('FORM_CONTACT',         'https://docs.google.com/forms/d/e/1FAIpQLSf4QfsVD1j5DPfWKaChyqtxu4AT3_KiV9vpP_3cUMvcgFmy6A/viewform'),
+        'state_advocate':  os.environ.get('FORM_STATE_ADVOCATE',  'https://docs.google.com/forms/d/e/1FAIpQLSc83yujRBx0X6VoiY5MoPmR7lDVvBPzAxH3_URbyDHz7uVQCg/viewform'),
+    }
 
     # ---- Cache TTL ----
     CACHE_TTL = int(os.environ.get('CACHE_TTL', '300'))

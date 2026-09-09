@@ -14,26 +14,31 @@
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start" class="contact-grid">
     <div class="mission-block" style="margin:0">
       <h2>Send a message</h2>
-      <p>Use your contact form link here. Build the Contact Google Form from <code>FORM_BLUEPRINTS.md</code> and embed or link it below.</p>
-      <!-- Embed your Google Form here once built:
-           <iframe src="YOUR_GOOGLE_FORM_EMBED_URL" width="100%" height="600" frameborder="0">
-           </iframe>
-      -->
+      <p>Questions, media inquiries, a local news tip, or a website correction — send it here. This isn't a 24/7 emergency line; for an animal emergency, contact local animal control or a veterinarian.</p>
+      {% if forms.contact %}
+      <div style="margin-top:16px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden">
+        <iframe src="{{ embed_form(forms.contact) }}" width="100%" height="820" frameborder="0" marginheight="0" marginwidth="0" title="Contact form" style="display:block">Loading…</iframe>
+      </div>
+      <p style="margin-top:10px;font-size:.85rem;color:var(--inkMuted)">
+        Form not loading? <a href="{{ forms.contact }}" target="_blank" rel="noopener noreferrer">Open it in a new tab</a>.
+      </p>
+      {% else %}
       <div class="state" style="margin-top:16px">
         <strong>Contact form coming soon.</strong>
-        <span>We're setting up our contact form. In the meantime, reach out via the volunteer or partner application links.</span>
+        <span>In the meantime, reach out via the volunteer or partner application links.</span>
       </div>
+      {% endif %}
     </div>
 
     <div>
       <div class="mission-block" style="margin:0 0 20px">
         <h2>Quick links</h2>
         <ul style="padding-left:0;list-style:none;display:flex;flex-direction:column;gap:10px;margin:0">
-          <li><a href="{{ url_for('adopt.index') }}" class="button secondary" style="display:block;text-align:left">Adoption application →</a></li>
-          <li><a href="{{ url_for('adopt.index') }}#foster" class="button secondary" style="display:block;text-align:left">Foster application →</a></li>
-          <li><a href="{{ url_for('partners.index') }}" class="button secondary" style="display:block;text-align:left">Partner application →</a></li>
-          <li><a href="{{ url_for('get_involved.index') }}" class="button secondary" style="display:block;text-align:left">Volunteer application →</a></li>
-          <li><a href="{{ url_for('transport_public.index') }}" class="button secondary" style="display:block;text-align:left">Transport request →</a></li>
+          <li><a href="{{ forms.adoption }}" class="button secondary" style="display:block;text-align:left" target="_blank" rel="noopener noreferrer">Adoption application →</a></li>
+          <li><a href="{{ forms.foster }}" class="button secondary" style="display:block;text-align:left" target="_blank" rel="noopener noreferrer">Foster application →</a></li>
+          <li><a href="{{ forms.partner }}" class="button secondary" style="display:block;text-align:left" target="_blank" rel="noopener noreferrer">Partner application →</a></li>
+          <li><a href="{{ forms.volunteer }}" class="button secondary" style="display:block;text-align:left" target="_blank" rel="noopener noreferrer">Volunteer application →</a></li>
+          <li><a href="{{ forms.transport_request }}" class="button secondary" style="display:block;text-align:left" target="_blank" rel="noopener noreferrer">Transport request →</a></li>
         </ul>
       </div>
       <div class="mission-block" style="margin:0">

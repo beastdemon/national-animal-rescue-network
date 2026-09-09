@@ -50,11 +50,24 @@ def create_app(config_name: str = None) -> Flask:
     app.register_blueprint(events_bp)
     app.register_blueprint(news_bp)
 
-    # Inject `now` into every template so base.html can render the copyright year
+    # Inject `now` and the form URLs into every template.
     from datetime import datetime as _dt
+    import re as _re
+
+    def _embed_url(view_url: str) -> str:
+        """Turn a Google Form /viewform link into an ?embedded=true version."""
+        if not view_url:
+            return ''
+        base = _re.sub(r'\?.*$', '', view_url)
+        sep = '&' if '?' in view_url else '?'
+        return f'{view_url}{sep}embedded=true' if '?' not in view_url else f'{base}?embedded=true'
 
     @app.context_processor
     def inject_globals():
-        return {'now': _dt.utcnow()}
+        return {
+            'now': _dt.utcnow(),
+            'forms': app.config.get('FORMS', {}),
+            'embed_form': _embed_url,
+        }
 
     return app

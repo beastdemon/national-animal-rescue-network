@@ -99,7 +99,16 @@
   <div class="mission-block" style="margin-top:36px">
     <h2>Become a partner</h2>
     <p>We work with shelters and rescue organizations that need help with transport, foster coordination, or adoption reach. If your shelter or rescue serves an underserved area and you'd like to connect with the network, we'd like to hear from you.</p>
-    <a href="#" class="button primary" style="margin-top:8px">Submit a partner application</a>
+    <a href="{{ forms.partner }}" class="button primary" style="margin-top:8px" target="_blank" rel="noopener noreferrer">Submit a partner application</a>
+  </div>
+
+  <div class="mission-block" style="margin-top:20px">
+    <h2>Already a partner?</h2>
+    <p>Approved partner organizations use these forms to keep listings current. If you haven't been approved yet, start with the partner application above.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:8px">
+      <a href="{{ forms.submit_dog }}" class="button secondary" target="_blank" rel="noopener noreferrer">Submit or update a dog</a>
+      <a href="{{ forms.rescue_availability }}" class="button secondary" target="_blank" rel="noopener noreferrer">Update availability</a>
+    </div>
   </div>
 </div>
 
